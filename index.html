@@ -1432,43 +1432,170 @@ window._saveNewForm = async () => {
 // ── SLOT MANAGEMENT ───────────────────────────────────────────────
 window._modalAddSlot=(fid)=>{
   document.body.insertAdjacentHTML('beforeend',`
-    <div class="modal-overlay" id="slotModal"><div class="modal">
-      <div class="modal-title">Añadir franja horaria</div>
-      <div class="form-row-3">
-        <div><label>Fecha</label><input type="date" id="sm-date"></div>
-        <div><label>Hora inicio</label><input type="time" id="sm-start"></div>
-        <div><label>Hora fin</label><input type="time" id="sm-end"></div>
+    <div class="modal-overlay" id="slotModal"><div class="modal" style="width:640px;">
+      <div class="modal-title">➕ Añadir franjas a esta clase</div>
+
+      <!-- TABS -->
+      <div class="page-tabs" style="margin-bottom:16px;">
+        <button class="page-tab active" id="sm-tab-auto" onclick="window._smTab('auto')">🔢 Generador automático</button>
+        <button class="page-tab" id="sm-tab-manual" onclick="window._smTab('manual')">✏️ Franja manual</button>
       </div>
-      <div class="form-row mt-2">
-        <div><label>Cupos</label><input type="number" id="sm-max" value="5" min="1"></div>
-        <div>
-          <label>Duración por estudiante</label>
-          <select id="sm-dur">
-            <option value="0.5">30 min</option><option value="1" selected>1 hora</option>
-            <option value="1.5">1.5h</option><option value="2">2h</option><option value="3">3h</option>
-          </select>
+
+      <!-- AUTO -->
+      <div id="sm-panel-auto">
+        <div class="alert alert-info" style="font-size:.82rem;">Define el rango del día y se generan todas las franjas de golpe.</div>
+        <div class="form-row-3">
+          <div><label>📆 Fecha</label><input type="date" id="sm-gen-date" oninput="window._smRecalc()"></div>
+          <div><label>🕗 Hora inicio</label><input type="time" id="sm-gen-start" value="10:00" oninput="window._smRecalc()"></div>
+          <div><label>🕕 Hora fin</label><input type="time" id="sm-gen-end" value="18:00" oninput="window._smRecalc()"></div>
         </div>
+        <div class="form-row mt-2">
+          <div>
+            <label>⏱ Duración por examen</label>
+            <select id="sm-gen-dur" oninput="window._smRecalc()">
+              <option value="30">30 min</option><option value="60">1 hora</option>
+              <option value="90" selected>1.5 horas</option><option value="120">2 horas</option><option value="180">3 horas</option>
+            </select>
+          </div>
+          <div><label>👥 Estudiantes por franja</label><input type="number" id="sm-gen-pax" value="2" min="1" max="50" oninput="window._smRecalc()"></div>
+        </div>
+        <div id="sm-auto-preview" style="margin-top:14px;"></div>
       </div>
-      <label>Etiqueta</label>
-      <input type="text" id="sm-lbl" placeholder="Ej: Lun 18 nov · 8:00 – 10:00">
+
+      <!-- MANUAL -->
+      <div id="sm-panel-manual" class="hidden">
+        <div class="form-row-3">
+          <div><label>Fecha</label><input type="date" id="sm-date"></div>
+          <div><label>Hora inicio</label><input type="time" id="sm-start"></div>
+          <div><label>Hora fin</label><input type="time" id="sm-end"></div>
+        </div>
+        <div class="form-row mt-2">
+          <div><label>Cupos</label><input type="number" id="sm-max" value="2" min="1"></div>
+          <div>
+            <label>Duración por examen</label>
+            <select id="sm-dur">
+              <option value="30">30 min</option><option value="60">1h</option>
+              <option value="90" selected>1.5h</option><option value="120">2h</option><option value="180">3h</option>
+            </select>
+          </div>
+        </div>
+        <label>Etiqueta (se genera sola)</label>
+        <input type="text" id="sm-lbl" placeholder="Ej: Lun 18 nov · 8:00 – 9:30">
+      </div>
+
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="document.getElementById('slotModal').remove()">Cancelar</button>
-        <button class="btn btn-primary" onclick="window._saveSlot('${fid}')">Añadir</button>
+        <button class="btn btn-primary" id="sm-save-btn" onclick="window._saveSlot('${fid}')">Añadir franjas</button>
       </div>
     </div></div>`);
+
+  // Wire manual auto-label
+  ['sm-date','sm-start','sm-end'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('change',()=>{
+      const dv=document.getElementById('sm-date').value;
+      const sv=document.getElementById('sm-start').value;
+      const ev=document.getElementById('sm-end').value;
+      if (!dv||!sv) return;
+      const d=new Date(dv+'T12:00:00');
+      const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+      document.getElementById('sm-lbl').value=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} · ${sv}${ev?' – '+ev:''}`;
+    });
+  });
+
+  setTimeout(()=>window._smRecalc(), 50);
+};
+
+window._smTab = (tab) => {
+  document.getElementById('sm-tab-auto').classList.toggle('active', tab==='auto');
+  document.getElementById('sm-tab-manual').classList.toggle('active', tab==='manual');
+  document.getElementById('sm-panel-auto').classList.toggle('hidden', tab!=='auto');
+  document.getElementById('sm-panel-manual').classList.toggle('hidden', tab!=='manual');
+  document.getElementById('sm-save-btn').textContent = tab==='auto' ? 'Añadir franjas' : 'Añadir franja';
+};
+
+window._smRecalc = () => {
+  const dateVal  = document.getElementById('sm-gen-date')?.value;
+  const startVal = document.getElementById('sm-gen-start')?.value;
+  const endVal   = document.getElementById('sm-gen-end')?.value;
+  const dur      = parseInt(document.getElementById('sm-gen-dur')?.value)||90;
+  const pax      = parseInt(document.getElementById('sm-gen-pax')?.value)||2;
+  const preview  = document.getElementById('sm-auto-preview');
+  if (!preview||!startVal||!endVal) return;
+
+  const [sh,sm2]=startVal.split(':').map(Number);
+  const [eh,em]=endVal.split(':').map(Number);
+  const totalMin=(eh*60+em)-(sh*60+sm2);
+  if (totalMin<=0){preview.innerHTML=`<div class="alert alert-danger">⚠️ Hora fin debe ser mayor que inicio.</div>`;return;}
+
+  const slotCount=Math.floor(totalMin/dur);
+  const totalCupos=slotCount*pax;
+  const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  let dayStr='';
+  if (dateVal){const d=new Date(dateVal+'T12:00:00');dayStr=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;}
+  const fmt=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+
+  let rows='';
+  for (let i=0;i<slotCount;i++){
+    const sMin=sh*60+sm2+i*dur; const eMin=sMin+dur;
+    rows+=`<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-bottom:1px solid var(--border);">
+      <span class="text-sm bold">${dayStr?dayStr+' · ':''}${fmt(sMin)} – ${fmt(eMin)}</span>
+      <span class="badge badge-blue">${pax} cupo${pax>1?'s':''}</span></div>`;
+  }
+  preview.innerHTML=`
+    <div style="border:2px solid var(--accent);border-radius:10px;overflow:hidden;">
+      <div style="background:var(--accent);color:#fff;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:800;">📊 ${slotCount} franja${slotCount!==1?'s':''} · ${totalCupos} cupo${totalCupos!==1?'s':''}</span>
+        <span style="font-size:.78rem;opacity:.85;">${dur} min · ${pax} est/franja</span>
+      </div>
+      <div style="background:#f0faf9;max-height:220px;overflow-y:auto;">
+        ${slotCount===0?'<div class="text-muted text-sm" style="padding:12px;">Rango muy corto.</div>':rows}
+      </div>
+    </div>`;
 };
 
 window._saveSlot=async(fid)=>{
-  const lbl=document.getElementById('sm-lbl').value.trim();
-  const start=document.getElementById('sm-start').value;
-  const end=document.getElementById('sm-end').value;
-  const max=parseInt(document.getElementById('sm-max').value)||5;
-  const dur=parseFloat(document.getElementById('sm-dur').value)||1;
-  const date=document.getElementById('sm-date').value;
-  if (!lbl||!start) return alert('Completa etiqueta y hora de inicio.');
-  const sid='slot-'+Date.now();
-  await update(ref(db,`forms/${fid}/slotsMeta`),{[sid]:{label:lbl,max,start,end,date,dur,lbl}});
+  const isAuto = !document.getElementById('sm-panel-auto').classList.contains('hidden');
+  const newSlots={};
+
+  if (isAuto) {
+    const dateVal  = document.getElementById('sm-gen-date')?.value;
+    const startVal = document.getElementById('sm-gen-start')?.value;
+    const endVal   = document.getElementById('sm-gen-end')?.value;
+    const dur      = parseInt(document.getElementById('sm-gen-dur')?.value)||90;
+    const pax      = parseInt(document.getElementById('sm-gen-pax')?.value)||2;
+    if (!startVal||!endVal) return alert('Completa hora inicio y fin.');
+    const [sh,sm2]=startVal.split(':').map(Number);
+    const [eh,em]=endVal.split(':').map(Number);
+    const totalMin=(eh*60+em)-(sh*60+sm2);
+    const slotCount=Math.floor(totalMin/dur);
+    if (slotCount===0) return alert('El rango es muy corto para la duración seleccionada.');
+    const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    let dayStr='';
+    if (dateVal){const d=new Date(dateVal+'T12:00:00');dayStr=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;}
+    const fmt=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+    for (let i=0;i<slotCount;i++){
+      const sMin=sh*60+sm2+i*dur; const eMin=sMin+dur;
+      const sid='slot-'+Date.now()+'-'+i+'-'+Math.random().toString(36).substr(2,4);
+      newSlots[sid]={label:`${dayStr?dayStr+' · ':''}${fmt(sMin)} – ${fmt(eMin)}`,max:pax,start:fmt(sMin),end:fmt(eMin),date:dateVal||'',dur};
+    }
+  } else {
+    const lbl=document.getElementById('sm-lbl').value.trim();
+    const start=document.getElementById('sm-start').value;
+    const end=document.getElementById('sm-end').value;
+    const max=parseInt(document.getElementById('sm-max').value)||2;
+    const dur=parseInt(document.getElementById('sm-dur').value)||90;
+    const date=document.getElementById('sm-date').value;
+    if (!lbl||!start) return alert('Completa la etiqueta y hora de inicio.');
+    const sid='slot-'+Date.now();
+    newSlots[sid]={label:lbl,max,start,end,date,dur};
+  }
+
+  await update(ref(db,`forms/${fid}/slotsMeta`), newSlots);
   document.getElementById('slotModal').remove();
+  toast(`${Object.keys(newSlots).length} franja${Object.keys(newSlots).length>1?'s':''}  añadida${Object.keys(newSlots).length>1?'s':''}`);
   window._openClassDetail(fid);
 };
 
