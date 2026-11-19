@@ -20,8 +20,6 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* ── UTILS ── */
 .hidden { display: none !important; }
 .flex { display: flex; }
 .gap-2 { gap: 8px; }
@@ -29,246 +27,170 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
 .wrap { flex-wrap: wrap; }
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mt-3 { margin-top: 12px; }
-.mt-4 { margin-top: 16px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-.w100 { width: 100%; }
-.text-sm { font-size: 0.82rem; }
-.text-muted { color: var(--muted); }
-.bold { font-weight: 700; }
-.text-accent { color: var(--accent); }
-.text-danger { color: var(--danger); }
+.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}
+.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}
+.w100{width:100%}.text-sm{font-size:0.82rem}.text-muted{color:var(--muted)}
+.bold{font-weight:700}.text-accent{color:var(--accent)}.text-danger{color:var(--danger)}
 
-/* ── LAYOUT ── */
-#app { min-height: 100vh; }
+/* NAV */
+.topnav{background:var(--brand);color:#fff;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+.topnav-logo{display:flex;align-items:center;gap:12px;}
+.topnav-logo img{height:36px;object-fit:contain;}
+.topnav-logo span{font-weight:700;font-size:1rem;letter-spacing:.5px;}
+.topnav-right{display:flex;align-items:center;gap:16px;}
+.topnav-right .user-pill{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 14px;font-size:.8rem;}
+.btn-logout{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:5px 14px;font-size:.8rem;cursor:pointer;}
+.btn-logout:hover{background:rgba(255,255,255,.1);}
+.shell{display:flex;min-height:calc(100vh - 56px);}
+.sidebar{width:230px;background:var(--brand);padding:16px 0;flex-shrink:0;display:flex;flex-direction:column;gap:2px;}
+.sidebar a{display:block;padding:10px 20px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;border-left:3px solid transparent;transition:all .15s;}
+.sidebar a:hover,.sidebar a.active{color:#fff;background:rgba(255,255,255,.08);border-left-color:var(--accent);}
+.sidebar-section{padding:10px 20px 4px;font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);}
+.main{flex:1;padding:28px;overflow-y:auto;}
 
-/* ── TOP NAV ── */
-.topnav {
-  background: var(--brand); color: #fff;
-  padding: 0 24px; height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.topnav-logo { display: flex; align-items: center; gap: 12px; }
-.topnav-logo img { height: 36px; object-fit: contain; }
-.topnav-logo span { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; }
-.topnav-right { display: flex; align-items: center; gap: 16px; }
-.topnav-right .user-pill {
-  background: rgba(255,255,255,0.12); border-radius: 20px;
-  padding: 4px 14px; font-size: 0.8rem;
-}
-.btn-logout {
-  background: none; border: 1px solid rgba(255,255,255,0.3);
-  color: #fff; border-radius: 6px; padding: 5px 14px;
-  font-size: 0.8rem; cursor: pointer; transition: background .15s;
-}
-.btn-logout:hover { background: rgba(255,255,255,0.1); }
+/* CARDS */
+.card{background:var(--card);border-radius:10px;box-shadow:0 1px 8px rgba(0,0,0,.07);padding:24px;margin-bottom:20px;}
+.card-title{font-size:1rem;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--accent);color:var(--brand);}
 
-/* ── SIDEBAR + MAIN ── */
-.shell { display: flex; min-height: calc(100vh - 56px); }
-.sidebar {
-  width: 220px; background: var(--brand);
-  padding: 16px 0; flex-shrink: 0;
-  display: flex; flex-direction: column; gap: 2px;
-}
-.sidebar a {
-  display: block; padding: 10px 20px;
-  color: rgba(255,255,255,0.75); text-decoration: none;
-  font-size: 0.88rem; border-left: 3px solid transparent;
-  transition: all .15s;
-}
-.sidebar a:hover, .sidebar a.active {
-  color: #fff; background: rgba(255,255,255,0.08);
-  border-left-color: var(--accent);
-}
-.sidebar-section {
-  padding: 10px 20px 4px;
-  font-size: 0.7rem; text-transform: uppercase;
-  letter-spacing: 1px; color: rgba(255,255,255,0.4);
-}
-.main { flex: 1; padding: 28px; overflow-y: auto; }
+/* FORMS */
+label{display:block;font-size:.82rem;font-weight:600;margin-bottom:4px;margin-top:12px;}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],input[type=time],input[type=tel],select,textarea{
+  width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:.92rem;color:var(--text);background:#fff;transition:border-color .15s;font-family:inherit;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+textarea{resize:vertical;min-height:60px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+@media(max-width:600px){.form-row,.form-row-3,.form-row-4{grid-template-columns:1fr;}}
 
-/* ── CARDS ── */
-.card {
-  background: var(--card); border-radius: 10px;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.07); padding: 24px;
-  margin-bottom: 20px;
-}
-.card-title {
-  font-size: 1rem; font-weight: 700; margin-bottom: 16px;
-  padding-bottom: 10px; border-bottom: 2px solid var(--accent);
-  color: var(--brand);
-}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:7px;border:none;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{background:#e8edf4;color:var(--brand);}
+.btn-secondary:hover{background:#d8e2ef;}
+.btn-danger{background:#fde8e8;color:var(--danger);}
+.btn-danger:hover{background:#fbd5d5;}
+.btn-warn{background:#fef3c7;color:#92400e;}
+.btn-warn:hover{background:#fde68a;}
+.btn-green{background:#d1fae5;color:#065f46;}
+.btn-green:hover{background:#a7f3d0;}
+.btn-sm{padding:5px 12px;font-size:.78rem;}
+.btn-block{width:100%;justify-content:center;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
 
-/* ── FORMS ── */
-label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; margin-top: 12px; }
-input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], input[type=time], select, textarea {
-  width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
-  border-radius: 7px; font-size: 0.92rem; color: var(--text);
-  background: #fff; transition: border-color .15s;
-  font-family: inherit;
-}
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
-textarea { resize: vertical; min-height: 60px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-@media(max-width:600px) { .form-row, .form-row-3 { grid-template-columns: 1fr; } }
+/* BADGES */
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;}
+.badge-green{background:#d1fae5;color:#065f46;}
+.badge-yellow{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}
+.badge-blue{background:#dbeafe;color:#1e40af;}
+.badge-gray{background:#f3f4f6;color:#374151;}
+.badge-purple{background:#ede9fe;color:#5b21b6;}
 
-/* ── BUTTONS ── */
-.btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 20px; border-radius: 7px; border: none;
-  font-size: 0.88rem; font-weight: 700; cursor: pointer;
-  transition: all .15s; text-decoration: none;
-}
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent2); }
-.btn-secondary { background: #e8edf4; color: var(--brand); }
-.btn-secondary:hover { background: #d8e2ef; }
-.btn-danger { background: #fde8e8; color: var(--danger); }
-.btn-danger:hover { background: #fbd5d5; }
-.btn-sm { padding: 5px 12px; font-size: 0.78rem; }
-.btn-block { width: 100%; justify-content: center; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:20px;}
+.stat-tile{background:var(--card);border-radius:10px;padding:16px 20px;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.stat-tile .num{font-size:2rem;font-weight:800;color:var(--accent);}
+.stat-tile .lbl{font-size:.75rem;color:var(--muted);margin-top:2px;}
 
-/* ── BADGES ── */
-.badge {
-  display: inline-block; padding: 2px 10px; border-radius: 20px;
-  font-size: 0.72rem; font-weight: 700;
-}
-.badge-green { background: #d1fae5; color: #065f46; }
-.badge-yellow { background: #fef3c7; color: #92400e; }
-.badge-red { background: #fee2e2; color: #991b1b; }
-.badge-blue { background: #dbeafe; color: #1e40af; }
-.badge-gray { background: #f3f4f6; color: #374151; }
+/* TABLES */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.86rem;}
+th{background:#f8fafc;padding:10px 14px;text-align:left;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:10px 14px;border-top:1px solid var(--border);}
+tr:hover td{background:#fafbfc;}
 
-/* ── STAT TILES ── */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
-.stat-tile { background: var(--card); border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
-.stat-tile .num { font-size: 2rem; font-weight: 800; color: var(--accent); }
-.stat-tile .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+/* SLOT CARDS */
+.slot-list{display:flex;flex-direction:column;gap:12px;}
+.slot-card{background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);border:1px solid var(--border);}
+.slot-head{background:var(--brand);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;}
+.slot-head .title{font-weight:700;font-size:.9rem;}
+.slot-body{padding:0;}
+.slot-empty{padding:14px 16px;color:var(--muted);font-size:.85rem;font-style:italic;}
 
-/* ── TABLES ── */
-.table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-th { background: #f8fafc; padding: 10px 14px; text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
-td { padding: 10px 14px; border-top: 1px solid var(--border); }
-tr:hover td { background: #fafbfc; }
+/* LOGIN */
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--brand);}
+.login-box{background:var(--card);border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.25);padding:40px;width:380px;max-width:95vw;}
+.login-logo{text-align:center;margin-bottom:24px;}
+.login-logo .app-name{font-size:1.3rem;font-weight:800;color:var(--brand);margin-top:8px;}
+.login-logo .app-sub{font-size:.8rem;color:var(--muted);}
+.login-error{background:#fee2e2;color:var(--danger);border-radius:6px;padding:8px 12px;font-size:.84rem;margin-top:10px;}
 
-/* ── SLOT CARDS ── */
-.slot-list { display: flex; flex-direction: column; gap: 12px; }
-.slot-card { background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.06); border: 1px solid var(--border); }
-.slot-head { background: var(--brand); color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-.slot-head .title { font-weight: 700; font-size: 0.9rem; }
-.slot-body { padding: 0; }
-.slot-empty { padding: 14px 16px; color: var(--muted); font-size: 0.85rem; font-style: italic; }
+/* STUDENT PAGE */
+#studentPage{min-height:100vh;}
+.student-header{background:var(--brand);padding:20px 24px;display:flex;align-items:center;gap:16px;}
+.student-header img{height:60px;object-fit:contain;}
+.student-header .info{color:#fff;}
+.student-header .info h1{font-size:1.1rem;font-weight:700;}
+.student-header .info p{font-size:.82rem;color:var(--accent);margin-top:2px;}
+.student-body{max-width:680px;margin:28px auto;padding:0 16px;}
+.franja-pick-grid{display:flex;flex-direction:column;gap:10px;}
+.franja-pick-btn{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border:2px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:.92rem;color:var(--text);transition:all .15s;width:100%;text-align:left;}
+.franja-pick-btn:hover:not(.fp-full){border-color:var(--accent);background:#f0faf9;}
+.franja-pick-btn.fp-selected{border-color:var(--accent);background:#e0f7f5;}
+.franja-pick-btn.fp-full{opacity:.5;cursor:not-allowed;background:#f9fafb;}
+.confirm-wrap{text-align:center;padding:40px 20px;}
+.confirm-icon{font-size:3rem;margin-bottom:12px;}
+.confirm-box{background:#f0faf9;border-radius:10px;padding:20px;margin:20px 0;text-align:left;}
+.confirm-box p{margin:5px 0;font-size:.92rem;}
 
-/* ── FRANJA SELECTOR (teacher create form) ── */
-.franja-row {
-  display: grid; grid-template-columns: auto 1fr 1fr 1fr auto;
-  gap: 8px; align-items: center; padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-}
-.franja-row:last-child { border-bottom: none; }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:999;}
+.modal{background:var(--card);border-radius:12px;padding:28px;width:600px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--brand);}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;border-top:1px solid var(--border);padding-top:16px;}
 
-/* ── LOGIN PAGE ── */
-#loginPage {
-  min-height: 100vh; display: flex; align-items: center;
-  justify-content: center; background: var(--brand);
-}
-.login-box {
-  background: var(--card); border-radius: 14px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-  padding: 40px; width: 380px; max-width: 95vw;
-}
-.login-logo { text-align: center; margin-bottom: 24px; }
-.login-logo img { height: 60px; object-fit: contain; }
-.login-logo .app-name { font-size: 1.3rem; font-weight: 800; color: var(--brand); margin-top: 8px; }
-.login-logo .app-sub { font-size: 0.8rem; color: var(--muted); }
-.login-error { background: #fee2e2; color: var(--danger); border-radius: 6px; padding: 8px 12px; font-size: 0.84rem; margin-top: 10px; }
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:7px;font-size:.86rem;margin-bottom:14px;}
+.alert-info{background:#dbeafe;color:#1e40af;}
+.alert-success{background:#d1fae5;color:#065f46;}
+.alert-warn{background:#fef3c7;color:#92400e;}
+.alert-danger{background:#fee2e2;color:#991b1b;}
 
-/* ── STUDENT FORM PAGE ── */
-#studentPage { min-height: 100vh; }
-.student-header { background: var(--brand); padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
-.student-header img { height: 60px; object-fit: contain; }
-.student-header .info { color: #fff; }
-.student-header .info h1 { font-size: 1.1rem; font-weight: 700; }
-.student-header .info p { font-size: 0.82rem; color: var(--accent); margin-top: 2px; }
-.student-body { max-width: 680px; margin: 28px auto; padding: 0 16px; }
+/* COPY LINK */
+.copy-link-box{display:flex;gap:8px;align-items:center;background:#f8fafc;border:1.5px solid var(--border);border-radius:7px;padding:8px 12px;margin-top:8px;}
+.copy-link-box input{background:none;border:none;flex:1;font-size:.82rem;color:var(--muted);}
+.copy-link-box input:focus{outline:none;}
 
-/* ── FRANJA BUTTONS (student) ── */
-.franja-pick-grid { display: flex; flex-direction: column; gap: 10px; }
-.franja-pick-btn {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px;
-  background: #fff; cursor: pointer; font-size: 0.92rem; color: var(--text);
-  transition: all .15s; width: 100%; text-align: left;
-}
-.franja-pick-btn:hover:not(.fp-full) { border-color: var(--accent); background: #f0faf9; }
-.franja-pick-btn.fp-selected { border-color: var(--accent); background: #e0f7f5; }
-.franja-pick-btn.fp-full { opacity: 0.5; cursor: not-allowed; background: #f9fafb; }
+/* LOGO PREVIEW */
+.logo-preview{width:120px;height:60px;object-fit:contain;border:1px solid var(--border);border-radius:6px;background:#f8fafc;padding:4px;}
 
-/* ── CONFIRM ── */
-.confirm-wrap { text-align: center; padding: 40px 20px; }
-.confirm-icon { font-size: 3rem; margin-bottom: 12px; }
-.confirm-box { background: #f0faf9; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: left; }
-.confirm-box p { margin: 5px 0; font-size: 0.92rem; }
+/* PAGE TABS */
+.page-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);}
+.page-tab{padding:9px 20px;border:none;background:none;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.page-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
 
-/* ── MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-  display: flex; align-items: center; justify-content: center; z-index: 999;
-}
-.modal {
-  background: var(--card); border-radius: 12px; padding: 28px;
-  width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-.modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--brand); }
-.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+/* FRANJA BUILDER */
+.franja-builder{border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;background:#fafbfc;}
+.franja-builder-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 
-/* ── ALERT ── */
-.alert { padding: 10px 14px; border-radius: 7px; font-size: 0.86rem; margin-bottom: 14px; }
-.alert-info { background: #dbeafe; color: #1e40af; }
-.alert-success { background: #d1fae5; color: #065f46; }
-.alert-warn { background: #fef3c7; color: #92400e; }
+/* PROGRESS BAR */
+.prog-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-top:4px;}
+.prog-bar-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;}
 
-/* ── COPY LINK ── */
-.copy-link-box {
-  display: flex; gap: 8px; align-items: center;
-  background: #f8fafc; border: 1.5px solid var(--border); border-radius: 7px;
-  padding: 8px 12px; margin-top: 8px;
-}
-.copy-link-box input { background: none; border: none; flex: 1; font-size: 0.82rem; color: var(--muted); }
-.copy-link-box input:focus { outline: none; }
+/* MEET STATUS */
+.meet-pill{display:inline-flex;align-items:center;gap:5px;background:#e0f2fe;color:#0369a1;border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:700;}
+.meet-pill.ready{background:#d1fae5;color:#065f46;}
+.meet-pill.pending{background:#fef3c7;color:#92400e;}
 
-/* ── ORG LOGO PREVIEW ── */
-.logo-preview { width: 120px; height: 60px; object-fit: contain; border: 1px solid var(--border); border-radius: 6px; background: #f8fafc; padding: 4px; }
-
-/* ── PAGE TABS ── */
-.page-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
-.page-tab { padding: 9px 20px; border: none; background: none; font-size: 0.88rem; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; }
-.page-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* CHECKBOXES */
+.check-row{display:flex;align-items:center;gap:8px;padding:8px 0;}
+.check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;}
 </style>
 </head>
 <body>
 <div id="app"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     FIREBASE + APP LOGIC
-═══════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getDatabase, ref, set, get, push, onValue, remove, update, serverTimestamp
+  getDatabase, ref, set, get, push, onValue, remove, update, serverTimestamp, runTransaction
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
-// ── FIREBASE CONFIG (REPLACE WITH YOUR NEW PROJECT) ──────────────
 const firebaseConfig = {
   apiKey: "AIzaSyDPQYL6lTK8n1l9OeVtSC-iimk-iO14A6M",
   authDomain: "testschedule-app.firebaseapp.com",
@@ -278,31 +200,104 @@ const firebaseConfig = {
   messagingSenderId: "710014992745",
   appId: "1:710014992745:web:f2530da1ef6c13fa75fdf8"
 };
-// ─────────────────────────────────────────────────────────────────
 
 const fbApp = initializeApp(firebaseConfig);
-const auth = getAuth(fbApp);
-const db = getDatabase(fbApp);
+const auth  = getAuth(fbApp);
+const db    = getDatabase(fbApp);
 
-// ── ROUTER ────────────────────────────────────────────────────────
-const hash = location.hash; // e.g. #form/abc123
+// ── Google OAuth / Calendar ─────────────────────────────────────────
+// GOOGLE_CLIENT_ID is injected by the superadmin from the org settings
+// It lives at orgs/{orgId}/googleClientId
+let gCalToken = null; // OAuth access token after user authorizes
+
+function getGoogleClientId() {
+  return window._googleClientId || null;
+}
+
+async function authorizeGoogleCalendar(clientId) {
+  return new Promise((resolve, reject) => {
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: location.origin + location.pathname,
+      response_type: 'token',
+      scope: 'https://www.googleapis.com/auth/calendar.events',
+      prompt: 'consent'
+    });
+    const popup = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params, 'gcal_auth', 'width=500,height=600');
+    const timer = setInterval(() => {
+      try {
+        if (popup.closed) { clearInterval(timer); reject(new Error('Popup cerrado')); return; }
+        const hash = popup.location.hash;
+        if (hash && hash.includes('access_token')) {
+          clearInterval(timer);
+          popup.close();
+          const p = new URLSearchParams(hash.substring(1));
+          resolve(p.get('access_token'));
+        }
+      } catch(e) { /* cross-origin, still loading */ }
+    }, 300);
+  });
+}
+
+async function createCalendarEventWithMeet(token, {title, start, end, teacherEmail, studentName, studentEmail, description}) {
+  const event = {
+    summary: `Test ${title} — ${studentName}`,
+    description: description || `Examen oral programado por TestSchedule`,
+    start: { dateTime: start, timeZone: 'America/Bogota' },
+    end:   { dateTime: end,   timeZone: 'America/Bogota' },
+    attendees: [
+      { email: teacherEmail },
+      { email: studentEmail }
+    ],
+    conferenceData: {
+      createRequest: {
+        requestId: `testschedule-${Date.now()}-${Math.random().toString(36).substr(2,6)}`,
+        conferenceSolutionKey: { type: 'hangoutsMeet' }
+      }
+    }
+  };
+  const resp = await fetch(
+    'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&sendUpdates=none',
+    {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(event)
+    }
+  );
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.error?.message || 'Error creando evento');
+  }
+  const data = await resp.json();
+  return {
+    meetLink: data.conferenceData?.entryPoints?.[0]?.uri || null,
+    eventId: data.id,
+    eventLink: data.htmlLink
+  };
+}
+
+// ── ROUTER ──────────────────────────────────────────────────────────
 let currentUser = null;
 let currentUserData = null;
+const hash = location.hash;
 
 onAuthStateChanged(auth, async user => {
   if (user) {
     currentUser = user;
     const snap = await get(ref(db, `users/${user.uid}`));
     currentUserData = snap.val();
+    if (!currentUserData) { signOut(auth); return; }
+    // Load google client id for org
+    if (currentUserData.orgId) {
+      const orgSnap = await get(ref(db, `orgs/${currentUserData.orgId}`));
+      const org = orgSnap.val() || {};
+      if (org.googleClientId) window._googleClientId = org.googleClientId;
+    }
     renderAuthed();
   } else {
-    currentUser = null;
-    currentUserData = null;
-    if (hash.startsWith('#form/')) {
-      renderStudentForm(hash.replace('#form/', ''));
-    } else {
-      renderLogin();
-    }
+    currentUser = null; currentUserData = null;
+    if (hash.startsWith('#form/')) renderStudentForm(hash.replace('#form/', ''));
+    else renderLogin();
   }
 });
 
@@ -314,7 +309,7 @@ function renderLogin() {
     <div id="loginPage">
       <div class="login-box">
         <div class="login-logo">
-          <div style="font-size:2rem;">📅</div>
+          <div style="font-size:2.5rem;">📅</div>
           <div class="app-name">TestSchedule</div>
           <div class="app-sub">Gestión de horarios de exámenes</div>
         </div>
@@ -331,35 +326,24 @@ function renderLogin() {
 
 window._login = async () => {
   const email = document.getElementById('li-email').value.trim();
-  const pass = document.getElementById('li-pass').value;
-  const err = document.getElementById('li-err');
+  const pass  = document.getElementById('li-pass').value;
+  const err   = document.getElementById('li-err');
   err.classList.add('hidden');
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e) {
-    err.textContent = 'Correo o contraseña incorrectos.';
-    err.classList.remove('hidden');
-  }
+  try { await signInWithEmailAndPassword(auth, email, pass); }
+  catch(e) { err.textContent = 'Correo o contraseña incorrectos.'; err.classList.remove('hidden'); }
 };
 
 // ══════════════════════════════════════════════════════════════════
-// ROUTE AFTER LOGIN
+// ROUTE
 // ══════════════════════════════════════════════════════════════════
 function renderAuthed() {
-  if (!currentUserData) {
-    renderLogin();
-    return;
-  }
   const role = currentUserData.role;
   if (role === 'superadmin') renderSuperAdmin();
-  else if (role === 'admin') renderOrgAdmin();
+  else if (role === 'admin')  renderOrgAdmin();
   else if (role === 'teacher') renderTeacher();
   else renderLogin();
 }
 
-// ══════════════════════════════════════════════════════════════════
-// SHARED NAV HELPERS
-// ══════════════════════════════════════════════════════════════════
 function navHTML(links, orgLogo, orgName) {
   const logoSrc = orgLogo
     ? `<img src="${orgLogo}" alt="${orgName}">`
@@ -381,20 +365,27 @@ function navHTML(links, orgLogo, orgName) {
 }
 
 window._logout = () => signOut(auth);
-
 window._nav = (id) => {
   document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-  const el = document.getElementById('nav-'+id);
+  const el = document.getElementById('nav-' + id);
   if (el) el.classList.add('active');
   if (currentUserData.role === 'superadmin') renderSASection(id);
   else if (currentUserData.role === 'admin') renderAdminSection(id);
   else if (currentUserData.role === 'teacher') renderTeacherSection(id);
 };
-
 function activateNav(id) {
   document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-  const el = document.getElementById('nav-'+id);
+  const el = document.getElementById('nav-' + id);
   if (el) el.classList.add('active');
+}
+
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px;border-radius:8px;font-size:.88rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:opacity .3s;
+    background:${type==='success'?'#065f46':type==='error'?'#991b1b':'#92400e'};color:#fff;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -402,7 +393,7 @@ function activateNav(id) {
 // ══════════════════════════════════════════════════════════════════
 function renderSuperAdmin() {
   const links = [
-    { id:'sa-orgs', icon:'🏢', label:'Organizaciones' },
+    { id:'sa-orgs',  icon:'🏢', label:'Organizaciones' },
     { id:'sa-users', icon:'👥', label:'Usuarios' },
     { id:'sa-forms', icon:'📋', label:'Todos los formularios' },
   ];
@@ -413,675 +404,878 @@ function renderSuperAdmin() {
 async function renderSASection(id) {
   activateNav(id);
   const mc = document.getElementById('mainContent');
-  if (id === 'sa-orgs') await renderSAOrgs(mc);
-  else if (id === 'sa-users') await renderSAUsers(mc);
-  else if (id === 'sa-forms') await renderSAForms(mc);
+  if (id==='sa-orgs')  await renderSAOrgs(mc);
+  else if (id==='sa-users') await renderSAUsers(mc);
+  else if (id==='sa-forms') await renderSAForms(mc);
 }
 
-// ── ORGS ──────────────────────────────────────────────────────────
 async function renderSAOrgs(mc) {
-  const snap = await get(ref(db, 'orgs'));
-  const orgs = snap.val() || {};
-  mc.innerHTML = `
+  const snap = await get(ref(db,'orgs'));
+  const orgs = snap.val()||{};
+  mc.innerHTML=`
     <div class="flex justify-between items-center mb-3">
       <h2 style="font-size:1.1rem;font-weight:800;">Organizaciones</h2>
       <button class="btn btn-primary btn-sm" onclick="window._modalNewOrg()">+ Nueva organización</button>
     </div>
     <div class="card" style="padding:0;">
-      <div class="table-wrap">
-        <table>
-          <tr><th>Organización</th><th>Logo</th><th>Slug</th><th>Acciones</th></tr>
-          ${Object.entries(orgs).map(([id, o]) => `
-            <tr>
-              <td class="bold">${o.name}</td>
-              <td>${o.logoUrl ? `<img src="${o.logoUrl}" style="height:32px;object-fit:contain;">` : '—'}</td>
-              <td><span class="badge badge-gray">${id}</span></td>
-              <td>
-                <button class="btn btn-secondary btn-sm" onclick="window._modalEditOrg('${id}')">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="window._deleteOrg('${id}')">Eliminar</button>
-              </td>
-            </tr>`).join('') || '<tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px;">Sin organizaciones aún</td></tr>'}
-        </table>
-      </div>
+      <div class="table-wrap"><table>
+        <tr><th>Organización</th><th>Logo</th><th>Slug</th><th>Google Client ID</th><th>Acciones</th></tr>
+        ${Object.entries(orgs).map(([id,o])=>`
+          <tr>
+            <td class="bold">${o.name}</td>
+            <td>${o.logoUrl?`<img src="${o.logoUrl}" style="height:32px;object-fit:contain;">`:'—'}</td>
+            <td><span class="badge badge-gray">${id}</span></td>
+            <td class="text-sm text-muted">${o.googleClientId?'✅ Configurado':'⚠️ Sin configurar'}</td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="window._modalEditOrg('${id}')">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="window._deleteOrg('${id}')">Eliminar</button>
+            </td>
+          </tr>`).join('')||'<tr><td colspan="5" class="text-muted" style="text-align:center;padding:20px;">Sin organizaciones aún</td></tr>'}
+      </table></div>
     </div>`;
 }
 
-window._modalNewOrg = () => showOrgModal(null, null);
-window._modalEditOrg = async (id) => {
-  const snap = await get(ref(db, `orgs/${id}`));
-  showOrgModal(id, snap.val());
-};
+window._modalNewOrg = ()=>showOrgModal(null,null);
+window._modalEditOrg = async (id)=>{ const snap=await get(ref(db,`orgs/${id}`)); showOrgModal(id,snap.val()); };
 
-function showOrgModal(orgId, data) {
-  const isEdit = !!orgId;
-  document.body.insertAdjacentHTML('beforeend', `
+function showOrgModal(orgId,data){
+  const isEdit=!!orgId;
+  document.body.insertAdjacentHTML('beforeend',`
     <div class="modal-overlay" id="orgModal">
       <div class="modal">
-        <div class="modal-title">${isEdit ? 'Editar' : 'Nueva'} organización</div>
+        <div class="modal-title">${isEdit?'Editar':'Nueva'} organización</div>
         <label>Nombre de la organización</label>
         <input type="text" id="om-name" value="${data?.name||''}">
-        <label>URL del logo (pega el enlace de la imagen)</label>
+        <label>URL del logo</label>
         <input type="text" id="om-logo" placeholder="https://..." value="${data?.logoUrl||''}">
         <div id="om-logo-preview" class="mt-2"></div>
+        <label>Plantilla de correo de citación</label>
+        <div class="alert alert-info mt-1" style="margin-bottom:0;">Usa: <code>{nombre}</code> <code>{apellido}</code> <code>{fecha}</code> <code>{hora}</code> <code>{meet}</code> <code>{profe}</code> <code>{nivel}</code> <code>{grupo}</code></div>
+        <textarea id="om-email-tpl" rows="6" placeholder="Estimado/a {nombre} {apellido},\n\nTe informamos que tu examen está programado para el {fecha} a las {hora}.\n\nLink de Meet: {meet}\n\nProfesor: {profe}\n\nSaludos,\nTweetalig">${data?.emailTemplate||''}</textarea>
+        <label>Asunto del correo</label>
+        <input type="text" id="om-email-subj" placeholder="Citación a Examen de Inglés — {nombre} {apellido}" value="${data?.emailSubject||'Citación a Examen de Inglés — {nombre} {apellido}'}">
+        <label>Google OAuth Client ID <span class="text-muted">(para crear Meet automático)</span></label>
+        <input type="text" id="om-gcal" placeholder="xxxx.apps.googleusercontent.com" value="${data?.googleClientId||''}">
         <div class="modal-footer">
           <button class="btn btn-secondary" onclick="document.getElementById('orgModal').remove()">Cancelar</button>
           <button class="btn btn-primary" onclick="window._saveOrg('${orgId||''}')">Guardar</button>
         </div>
       </div>
     </div>`);
-  document.getElementById('om-logo').addEventListener('input', e => {
-    const p = document.getElementById('om-logo-preview');
-    p.innerHTML = e.target.value ? `<img src="${e.target.value}" class="logo-preview" onerror="this.style.display='none'">` : '';
+  document.getElementById('om-logo').addEventListener('input',e=>{
+    const p=document.getElementById('om-logo-preview');
+    p.innerHTML=e.target.value?`<img src="${e.target.value}" class="logo-preview" onerror="this.style.display='none'">`:'';
   });
-  if (data?.logoUrl) {
-    document.getElementById('om-logo-preview').innerHTML = `<img src="${data.logoUrl}" class="logo-preview">`;
-  }
+  if(data?.logoUrl) document.getElementById('om-logo-preview').innerHTML=`<img src="${data.logoUrl}" class="logo-preview">`;
 }
 
 window._saveOrg = async (orgId) => {
-  const name = document.getElementById('om-name').value.trim();
-  const logoUrl = document.getElementById('om-logo').value.trim();
-  if (!name) return alert('Escribe el nombre de la organización.');
-  const id = orgId || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g,'');
-  await set(ref(db, `orgs/${id}`), { name, logoUrl });
+  const name       = document.getElementById('om-name').value.trim();
+  const logoUrl    = document.getElementById('om-logo').value.trim();
+  const emailTemplate = document.getElementById('om-email-tpl').value.trim();
+  const emailSubject  = document.getElementById('om-email-subj').value.trim();
+  const googleClientId= document.getElementById('om-gcal').value.trim();
+  if (!name) return alert('Escribe el nombre.');
+  const id = orgId || name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  await set(ref(db,`orgs/${id}`),{name,logoUrl,emailTemplate,emailSubject,googleClientId});
   document.getElementById('orgModal').remove();
   window._nav('sa-orgs');
+  toast('Organización guardada');
 };
 
 window._deleteOrg = async (id) => {
-  if (!confirm('¿Eliminar esta organización? Se eliminarán todos sus datos.')) return;
-  await remove(ref(db, `orgs/${id}`));
+  if (!confirm('¿Eliminar organización?')) return;
+  await remove(ref(db,`orgs/${id}`));
   window._nav('sa-orgs');
 };
 
-// ── USERS ─────────────────────────────────────────────────────────
-async function renderSAUsers(mc) {
-  const [usersSnap, orgsSnap] = await Promise.all([
-    get(ref(db, 'users')),
-    get(ref(db, 'orgs'))
-  ]);
-  const users = usersSnap.val() || {};
-  const orgs = orgsSnap.val() || {};
-
-  mc.innerHTML = `
+async function renderSAUsers(mc){
+  const [uSnap,oSnap]=await Promise.all([get(ref(db,'users')),get(ref(db,'orgs'))]);
+  const users=uSnap.val()||{}, orgs=oSnap.val()||{};
+  mc.innerHTML=`
     <div class="flex justify-between items-center mb-3">
       <h2 style="font-size:1.1rem;font-weight:800;">Usuarios</h2>
       <button class="btn btn-primary btn-sm" onclick="window._modalNewUser()">+ Nuevo usuario</button>
     </div>
-    <div class="card" style="padding:0;">
-      <div class="table-wrap">
-        <table>
-          <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Organización</th></tr>
-          ${Object.entries(users).map(([uid, u]) => `
-            <tr>
-              <td class="bold">${u.name||'—'}</td>
-              <td>${u.email}</td>
-              <td><span class="badge ${u.role==='superadmin'?'badge-blue':u.role==='admin'?'badge-yellow':'badge-green'}">${u.role}</span></td>
-              <td>${u.orgId ? (orgs[u.orgId]?.name || u.orgId) : '—'}</td>
-            </tr>`).join('') || '<tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px;">Sin usuarios</td></tr>'}
-        </table>
-      </div>
-    </div>`;
+    <div class="card" style="padding:0;"><div class="table-wrap"><table>
+      <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Organización</th></tr>
+      ${Object.entries(users).map(([uid,u])=>`
+        <tr>
+          <td class="bold">${u.name||'—'}</td>
+          <td>${u.email}</td>
+          <td><span class="badge ${u.role==='superadmin'?'badge-blue':u.role==='admin'?'badge-yellow':'badge-green'}">${u.role}</span></td>
+          <td>${u.orgId?(orgs[u.orgId]?.name||u.orgId):'—'}</td>
+        </tr>`).join('')||'<tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px;">Sin usuarios</td></tr>'}
+    </table></div></div>`;
 }
 
 window._modalNewUser = async () => {
-  const orgsSnap = await get(ref(db, 'orgs'));
-  const orgs = orgsSnap.val() || {};
-  document.body.insertAdjacentHTML('beforeend', `
-    <div class="modal-overlay" id="userModal">
-      <div class="modal">
-        <div class="modal-title">Crear usuario</div>
-        <div class="form-row">
-          <div><label>Nombre</label><input type="text" id="um-name"></div>
-          <div><label>Correo</label><input type="email" id="um-email"></div>
-        </div>
-        <label>Contraseña temporal</label>
-        <input type="text" id="um-pass" placeholder="Mínimo 6 caracteres">
-        <label>Rol</label>
-        <select id="um-role" onchange="window._toggleOrgField()">
-          <option value="teacher">Profesor</option>
-          <option value="admin">Admin de organización</option>
-          <option value="superadmin">Super Admin</option>
-        </select>
-        <div id="um-org-wrap">
-          <label>Organización</label>
-          <select id="um-org">
-            <option value="">— Selecciona —</option>
-            ${Object.entries(orgs).map(([id,o])=>`<option value="${id}">${o.name}</option>`).join('')}
-          </select>
-        </div>
-        <div id="um-status" class="mt-2 text-sm text-muted"></div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="document.getElementById('userModal').remove()">Cancelar</button>
-          <button class="btn btn-primary" id="um-btn" onclick="window._createUser()">Crear</button>
-        </div>
+  const oSnap=await get(ref(db,'orgs')); const orgs=oSnap.val()||{};
+  document.body.insertAdjacentHTML('beforeend',`
+    <div class="modal-overlay" id="userModal"><div class="modal">
+      <div class="modal-title">Crear usuario</div>
+      <div class="form-row">
+        <div><label>Nombre</label><input type="text" id="um-name"></div>
+        <div><label>Correo</label><input type="email" id="um-email"></div>
       </div>
-    </div>`);
+      <label>Contraseña temporal</label>
+      <input type="text" id="um-pass" placeholder="Mínimo 6 caracteres">
+      <label>Rol</label>
+      <select id="um-role" onchange="window._toggleOrgField()">
+        <option value="teacher">Profesor</option>
+        <option value="admin">Admin de organización</option>
+        <option value="superadmin">Super Admin</option>
+      </select>
+      <div id="um-org-wrap">
+        <label>Organización</label>
+        <select id="um-org"><option value="">— Selecciona —</option>
+          ${Object.entries(orgs).map(([id,o])=>`<option value="${id}">${o.name}</option>`).join('')}
+        </select>
+      </div>
+      <div id="um-status" class="mt-2 text-sm text-muted"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('userModal').remove()">Cancelar</button>
+        <button class="btn btn-primary" id="um-btn" onclick="window._createUser()">Crear</button>
+      </div>
+    </div></div>`);
 };
 
 window._toggleOrgField = () => {
-  const role = document.getElementById('um-role').value;
-  document.getElementById('um-org-wrap').style.display = role === 'superadmin' ? 'none' : 'block';
+  const r=document.getElementById('um-role').value;
+  document.getElementById('um-org-wrap').style.display=r==='superadmin'?'none':'block';
 };
 
 window._createUser = async () => {
-  const name = document.getElementById('um-name').value.trim();
-  const email = document.getElementById('um-email').value.trim();
-  const pass = document.getElementById('um-pass').value;
-  const role = document.getElementById('um-role').value;
-  const orgId = document.getElementById('um-org')?.value || '';
-  const status = document.getElementById('um-status');
-
-  if (!name || !email || !pass) return alert('Completa todos los campos.');
-  if (pass.length < 6) return alert('La contraseña debe tener al menos 6 caracteres.');
-
-  document.getElementById('um-btn').disabled = true;
-  status.textContent = 'Creando cuenta...';
-
+  const name=document.getElementById('um-name').value.trim();
+  const email=document.getElementById('um-email').value.trim();
+  const pass=document.getElementById('um-pass').value;
+  const role=document.getElementById('um-role').value;
+  const orgId=document.getElementById('um-org')?.value||'';
+  const status=document.getElementById('um-status');
+  if (!name||!email||!pass) return alert('Completa todos los campos.');
+  if (pass.length<6) return alert('Contraseña mínimo 6 caracteres.');
+  document.getElementById('um-btn').disabled=true; status.textContent='Creando cuenta...';
   try {
-    // Create a secondary auth instance to avoid signing out current user
-    const { initializeApp: initApp2 } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-    const { getAuth: getAuth2, createUserWithEmailAndPassword: createUser2 } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-    const app2 = initApp2(firebaseConfig, 'secondary-' + Date.now());
-    const auth2 = getAuth2(app2);
-    const cred = await createUser2(auth2, email, pass);
-    const uid = cred.user.uid;
+    const {initializeApp:ia}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const {getAuth:ga,createUserWithEmailAndPassword:cu}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const a2=ia(firebaseConfig,'sec-'+Date.now()); const auth2=ga(a2);
+    const cred=await cu(auth2,email,pass); const uid=cred.user.uid;
     await auth2.signOut();
-
-    await set(ref(db, `users/${uid}`), { name, email, role, orgId: orgId||null });
-    status.textContent = '✅ Usuario creado.';
-    setTimeout(() => { document.getElementById('userModal')?.remove(); window._nav('sa-users'); }, 1200);
-  } catch(e) {
-    status.textContent = '❌ Error: ' + (e.message || e.code);
-    document.getElementById('um-btn').disabled = false;
-  }
+    await set(ref(db,`users/${uid}`),{name,email,role,orgId:orgId||null});
+    status.textContent='✅ Usuario creado.';
+    setTimeout(()=>{document.getElementById('userModal')?.remove();window._nav('sa-users');},1200);
+  } catch(e){ status.textContent='❌ '+e.message; document.getElementById('um-btn').disabled=false; }
 };
 
-// ── ALL FORMS ─────────────────────────────────────────────────────
-async function renderSAForms(mc) {
-  const [formsSnap, orgsSnap, usersSnap] = await Promise.all([
-    get(ref(db, 'forms')),
-    get(ref(db, 'orgs')),
-    get(ref(db, 'users'))
-  ]);
-  const forms = formsSnap.val() || {};
-  const orgs = orgsSnap.val() || {};
-  const users = usersSnap.val() || {};
-
-  const rows = Object.entries(forms).map(([fid, f]) => {
-    const teacher = Object.values(users).find(u => u.uid === f.teacherUid || u.email === f.teacherEmail);
-    const org = orgs[f.orgId];
-    const slotCount = f.slots ? Object.keys(f.slots).length : 0;
-    const regCount = f.slots ? Object.values(f.slots).reduce((a,s)=>a+(Array.isArray(s)?s.length:0),0) : 0;
-    return `<tr>
-      <td class="bold">${f.title}</td>
-      <td>${org?.name||f.orgId||'—'}</td>
-      <td>${f.teacherName||teacher?.name||'—'}</td>
-      <td>${slotCount} franjas · ${regCount} registros</td>
-      <td><span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span></td>
-    </tr>`;
-  });
-
-  mc.innerHTML = `
+async function renderSAForms(mc){
+  const [fSnap,oSnap,uSnap]=await Promise.all([get(ref(db,'forms')),get(ref(db,'orgs')),get(ref(db,'users'))]);
+  const forms=fSnap.val()||{}, orgs=oSnap.val()||{}, users=uSnap.val()||{};
+  mc.innerHTML=`
     <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Todos los formularios</h2>
-    <div class="card" style="padding:0;">
-      <div class="table-wrap">
-        <table>
-          <tr><th>Título</th><th>Organización</th><th>Profesor</th><th>Slots</th><th>Estado</th></tr>
-          ${rows.join('') || '<tr><td colspan="5" class="text-muted" style="text-align:center;padding:20px;">Sin formularios</td></tr>'}
-        </table>
-      </div>
-    </div>`;
+    <div class="card" style="padding:0;"><div class="table-wrap"><table>
+      <tr><th>Título</th><th>Org</th><th>Profesor</th><th>Nivel/Grupo</th><th>Slots</th><th>Estado</th></tr>
+      ${Object.entries(forms).map(([fid,f])=>{
+        const slotCount=f.slotsMeta?Object.keys(f.slotsMeta).length:0;
+        const regCount=f.registrations?Object.keys(f.registrations).length:0;
+        return `<tr>
+          <td class="bold">${f.title}</td>
+          <td>${orgs[f.orgId]?.name||f.orgId||'—'}</td>
+          <td>${f.teacherName||'—'}</td>
+          <td>${f.nivel||'—'} · ${f.grupo||'—'}</td>
+          <td>${slotCount} franjas · ${regCount} inscritos</td>
+          <td><span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span></td>
+        </tr>`;
+      }).join('')||'<tr><td colspan="6" class="text-muted" style="text-align:center;padding:20px;">Sin formularios</td></tr>'}
+    </table></div></div>`;
 }
 
 // ══════════════════════════════════════════════════════════════════
 // ORG ADMIN
 // ══════════════════════════════════════════════════════════════════
-async function renderOrgAdmin() {
-  const orgSnap = await get(ref(db, `orgs/${currentUserData.orgId}`));
-  const org = orgSnap.val() || {};
-  const links = [
-    { id:'oa-forms', icon:'📋', label:'Formularios' },
-    { id:'oa-teachers', icon:'👩‍🏫', label:'Profesores' },
+async function renderOrgAdmin(){
+  const orgSnap=await get(ref(db,`orgs/${currentUserData.orgId}`));
+  const org=orgSnap.val()||{};
+  const links=[
+    {id:'oa-forms',icon:'📋',label:'Formularios'},
+    {id:'oa-teachers',icon:'👩‍🏫',label:'Profesores'},
+    {id:'oa-settings',icon:'⚙️',label:'Configuración'},
   ];
-  document.getElementById('app').innerHTML = navHTML(links, org.logoUrl, org.name||'Admin');
+  document.getElementById('app').innerHTML=navHTML(links,org.logoUrl,org.name||'Admin');
   window._nav('oa-forms');
 }
 
-async function renderAdminSection(id) {
-  activateNav(id);
-  const mc = document.getElementById('mainContent');
-  if (id === 'oa-forms') await renderAdminForms(mc);
-  else if (id === 'oa-teachers') await renderAdminTeachers(mc);
+async function renderAdminSection(id){
+  activateNav(id); const mc=document.getElementById('mainContent');
+  if (id==='oa-forms') await renderAdminForms(mc);
+  else if (id==='oa-teachers') await renderAdminTeachers(mc);
+  else if (id==='oa-settings') await renderAdminSettings(mc);
 }
 
-async function renderAdminForms(mc) {
-  const [formsSnap, usersSnap] = await Promise.all([
-    get(ref(db, 'forms')),
-    get(ref(db, 'users'))
-  ]);
-  const allForms = formsSnap.val() || {};
-  const orgForms = Object.entries(allForms).filter(([,f]) => f.orgId === currentUserData.orgId);
-  const users = usersSnap.val() || {};
-
-  mc.innerHTML = `<h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Formularios de la organización</h2>`;
-
-  if (!orgForms.length) {
-    mc.innerHTML += `<div class="card"><p class="text-muted">No hay formularios aún. Los profesores los crean desde su panel.</p></div>`;
-    return;
-  }
-
-  orgForms.forEach(([fid, f]) => {
-    const teacher = Object.values(users).find(u => u.email === f.teacherEmail);
-    const slots = f.slots || {};
-    const regCount = Object.values(slots).reduce((a,s)=>a+(Array.isArray(s)?s.length:0),0);
-    mc.innerHTML += `
+async function renderAdminForms(mc){
+  const [fSnap,uSnap]=await Promise.all([get(ref(db,'forms')),get(ref(db,'users'))]);
+  const allForms=fSnap.val()||{}, users=uSnap.val()||{};
+  const orgForms=Object.entries(allForms).filter(([,f])=>f.orgId===currentUserData.orgId);
+  mc.innerHTML=`<h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Formularios de la organización</h2>`;
+  if (!orgForms.length){mc.innerHTML+=`<div class="card"><p class="text-muted">No hay formularios aún.</p></div>`;return;}
+  orgForms.forEach(([fid,f])=>{
+    const regCount=f.registrations?Object.keys(f.registrations).length:0;
+    mc.innerHTML+=`
       <div class="card">
-        <div class="flex justify-between items-center mb-3">
+        <div class="flex justify-between items-center mb-2">
           <div>
             <div class="bold" style="font-size:1rem;">${f.title}</div>
-            <div class="text-sm text-muted">Profe: ${f.teacherName||teacher?.name||'—'} · ${regCount} registros</div>
+            <div class="text-sm text-muted">Profe: ${f.teacherName||'—'} · Nivel: ${f.nivel||'—'} · Grupo: ${f.grupo||'—'} · ${regCount} inscritos</div>
           </div>
           <span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span>
         </div>
-        ${renderSlotsReadOnly(f, fid, true)}
       </div>`;
   });
 }
 
-async function renderAdminTeachers(mc) {
-  const usersSnap = await get(ref(db, 'users'));
-  const users = usersSnap.val() || {};
-  const teachers = Object.entries(users).filter(([,u]) => u.orgId === currentUserData.orgId && u.role === 'teacher');
-
-  mc.innerHTML = `
+async function renderAdminTeachers(mc){
+  const uSnap=await get(ref(db,'users')); const users=uSnap.val()||{};
+  const teachers=Object.entries(users).filter(([,u])=>u.orgId===currentUserData.orgId&&u.role==='teacher');
+  mc.innerHTML=`
     <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Profesores</h2>
-    <div class="card" style="padding:0;">
-      <div class="table-wrap">
-        <table>
-          <tr><th>Nombre</th><th>Correo</th></tr>
-          ${teachers.map(([,u])=>`<tr><td class="bold">${u.name||'—'}</td><td>${u.email}</td></tr>`).join('')||'<tr><td colspan="2" class="text-muted" style="text-align:center;padding:20px;">Sin profesores</td></tr>'}
-        </table>
+    <div class="card" style="padding:0;"><div class="table-wrap"><table>
+      <tr><th>Nombre</th><th>Correo</th></tr>
+      ${teachers.map(([,u])=>`<tr><td class="bold">${u.name||'—'}</td><td>${u.email}</td></tr>`).join('')||'<tr><td colspan="2" class="text-muted" style="text-align:center;padding:20px;">Sin profesores</td></tr>'}
+    </table></div></div>`;
+}
+
+async function renderAdminSettings(mc){
+  const orgSnap=await get(ref(db,`orgs/${currentUserData.orgId}`));
+  const org=orgSnap.val()||{};
+  mc.innerHTML=`
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Configuración de la organización</h2>
+    <div class="card">
+      <div class="card-title">Plantilla de correo de citación</div>
+      <div class="alert alert-info">Variables disponibles: <code>{nombre}</code> <code>{apellido}</code> <code>{fecha}</code> <code>{hora}</code> <code>{meet}</code> <code>{profe}</code> <code>{nivel}</code> <code>{grupo}</code> <code>{programa}</code></div>
+      <label>Asunto</label>
+      <input type="text" id="as-subj" value="${org.emailSubject||'Citación a Examen de Inglés — {nombre} {apellido}'}">
+      <label>Cuerpo del correo</label>
+      <textarea id="as-body" rows="8">${org.emailTemplate||'Estimado/a {nombre} {apellido},\n\nTe informamos que tu examen de inglés ha sido programado.\n\nFecha: {fecha}\nHora: {hora}\nLink de Google Meet: {meet}\nProfesor/a: {profe}\nNivel: {nivel} · Grupo: {grupo}\n\nPor favor conectate con 5 minutos de anticipación.\n\nSaludos,\nTweetalig Centro de Idiomas'}</textarea>
+      <div class="mt-3">
+        <button class="btn btn-primary" onclick="window._saveOrgSettings()">Guardar plantilla</button>
       </div>
     </div>`;
 }
+
+window._saveOrgSettings = async () => {
+  const subj=document.getElementById('as-subj').value.trim();
+  const body=document.getElementById('as-body').value.trim();
+  await update(ref(db,`orgs/${currentUserData.orgId}`),{emailSubject:subj,emailTemplate:body});
+  toast('Configuración guardada');
+};
 
 // ══════════════════════════════════════════════════════════════════
 // TEACHER
 // ══════════════════════════════════════════════════════════════════
-async function renderTeacher() {
-  const orgSnap = await get(ref(db, `orgs/${currentUserData.orgId}`));
-  const org = orgSnap.val() || {};
-  const links = [
-    { id:'t-forms', icon:'📋', label:'Mis formularios' },
-    { id:'t-new', icon:'➕', label:'Crear formulario' },
+async function renderTeacher(){
+  const orgSnap=await get(ref(db,`orgs/${currentUserData.orgId}`));
+  const org=orgSnap.val()||{};
+  const links=[
+    {id:'t-forms',icon:'📋',label:'Mis clases'},
+    {id:'t-new',icon:'➕',label:'Nueva clase'},
   ];
-  document.getElementById('app').innerHTML = navHTML(links, org.logoUrl, org.name||'Profesor');
+  document.getElementById('app').innerHTML=navHTML(links,org.logoUrl,org.name||'Profesor');
   window._nav('t-forms');
 }
 
-async function renderTeacherSection(id) {
-  activateNav(id);
-  const mc = document.getElementById('mainContent');
-  if (id === 't-forms') await renderTeacherForms(mc);
-  else if (id === 't-new') renderTeacherNewForm(mc);
+async function renderTeacherSection(id){
+  activateNav(id); const mc=document.getElementById('mainContent');
+  if (id==='t-forms') await renderTeacherForms(mc);
+  else if (id==='t-new') renderTeacherNewForm(mc);
+  else if (id==='t-detail') { /* handled inline */ }
 }
 
-async function renderTeacherForms(mc) {
-  const formsSnap = await get(ref(db, 'forms'));
-  const all = formsSnap.val() || {};
-  const mine = Object.entries(all).filter(([,f]) => f.teacherUid === currentUser.uid);
+// ── TEACHER: LIST OF CLASSES ──────────────────────────────────────
+async function renderTeacherForms(mc){
+  const fSnap=await get(ref(db,'forms'));
+  const all=fSnap.val()||{};
+  const mine=Object.entries(all).filter(([,f])=>f.teacherUid===currentUser.uid);
 
-  mc.innerHTML = `
+  mc.innerHTML=`
     <div class="flex justify-between items-center mb-3">
-      <h2 style="font-size:1.1rem;font-weight:800;">Mis formularios</h2>
-      <button class="btn btn-primary btn-sm" onclick="window._nav('t-new')">+ Crear formulario</button>
+      <h2 style="font-size:1.1rem;font-weight:800;">Mis clases</h2>
+      <button class="btn btn-primary btn-sm" onclick="window._nav('t-new')">+ Nueva clase</button>
     </div>`;
 
-  if (!mine.length) {
-    mc.innerHTML += `<div class="card"><p class="text-muted">Aún no tienes formularios. Crea uno con el botón de arriba.</p></div>`;
+  if (!mine.length){
+    mc.innerHTML+=`<div class="card"><p class="text-muted">Aún no tienes clases. Crea una con el botón de arriba.</p></div>`;
     return;
   }
 
-  mine.forEach(([fid, f]) => {
-    const slots = f.slots || {};
-    const regCount = Object.values(slots).reduce((a,s)=>a+(Array.isArray(s)?s.length:0),0);
-    const slotCount = Object.keys(slots).length;
-    const formUrl = `${location.origin}${location.pathname}#form/${fid}`;
+  mine.forEach(([fid,f])=>{
+    const regCount=f.registrations?Object.keys(f.registrations).length:0;
+    const slotCount=f.slotsMeta?Object.keys(f.slotsMeta).length:0;
+    const withMeet=f.registrations?Object.values(f.registrations).filter(r=>r.meetLink).length:0;
+    const formUrl=`${location.origin}${location.pathname}#form/${fid}`;
 
-    mc.innerHTML += `
+    mc.innerHTML+=`
       <div class="card">
         <div class="flex justify-between items-center flex-wrap gap-2 mb-2">
           <div>
             <div class="bold" style="font-size:1rem;">${f.title}</div>
-            <div class="text-sm text-muted">${slotCount} franjas · ${regCount} estudiantes registrados</div>
+            <div class="text-sm text-muted">Nivel: ${f.nivel||'—'} · Grupo: ${f.grupo||'—'} · Programa: ${f.programa||'—'}</div>
+            <div class="text-sm text-muted mt-1">${slotCount} franjas · ${regCount} inscritos · ${withMeet} con Meet</div>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-2 wrap">
             <span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span>
-            <button class="btn btn-secondary btn-sm" onclick="window._toggleFormActive('${fid}',${f.active})">
-              ${f.active?'Cerrar':'Reabrir'}
-            </button>
+            <button class="btn btn-secondary btn-sm" onclick="window._openClassDetail('${fid}')">Ver detalle</button>
+            <button class="btn btn-secondary btn-sm" onclick="window._toggleFormActive('${fid}',${f.active})">${f.active?'Cerrar':'Reabrir'}</button>
             <button class="btn btn-danger btn-sm" onclick="window._deleteForm('${fid}')">Eliminar</button>
           </div>
         </div>
         <div class="copy-link-box">
-          <span style="font-size:0.75rem;color:var(--muted);white-space:nowrap;">Link estudiantes:</span>
+          <span style="font-size:.75rem;color:var(--muted);white-space:nowrap;">Link estudiantes:</span>
           <input type="text" id="link-${fid}" value="${formUrl}" readonly onclick="this.select()">
-          <button class="btn btn-secondary btn-sm" onclick="window._copyLink('${fid}')">Copiar</button>
-        </div>
-        <div class="mt-3">
-          <div class="flex justify-between items-center mb-2">
-            <span class="bold text-sm">Franjas y registros</span>
-            <button class="btn btn-secondary btn-sm" onclick="window._modalAddSlot('${fid}')">+ Añadir franja</button>
-          </div>
-          ${renderSlotsTeacher(f, fid)}
+          <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('${formUrl}').then(()=>toast('¡Link copiado!'))">Copiar</button>
         </div>
       </div>`;
   });
 }
 
-function renderSlotsTeacher(f, fid) {
-  const slots = f.slotsMeta || {};
-  const regs = f.slots || {};
-  if (!Object.keys(slots).length) return `<p class="text-sm text-muted">Sin franjas. Añade una.</p>`;
+// ── TEACHER: CLASS DETAIL ─────────────────────────────────────────
+window._openClassDetail = async (fid) => {
+  const mc=document.getElementById('mainContent');
+  mc.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);">Cargando...</div>`;
 
-  return `<div class="slot-list">${Object.entries(slots).map(([sid, s]) => {
-    const arr = regs[sid] || [];
-    const libre = s.max - arr.length;
-    let badge = libre <= 0 ? `<span class="badge badge-red">Lleno</span>`
-      : libre === 1 ? `<span class="badge badge-yellow">1 lugar</span>`
-      : `<span class="badge badge-green">${libre} lugares</span>`;
+  const [fSnap,orgSnap]=await Promise.all([
+    get(ref(db,`forms/${fid}`)),
+    get(ref(db,`orgs/${currentUserData.orgId}`))
+  ]);
+  const f=fSnap.val(); if (!f){mc.innerHTML='<p>No encontrado</p>';return;}
+  const org=orgSnap.val()||{};
+  const regs=f.registrations||{};
+  const slots=f.slotsMeta||{};
+  const regEntries=Object.entries(regs);
+  const withMeet=regEntries.filter(([,r])=>r.meetLink).length;
 
-    return `<div class="slot-card">
-      <div class="slot-head">
-        <span class="title">📅 ${s.label}</span>
-        <div class="flex gap-2 items-center">
-          ${badge}
-          <button class="btn btn-secondary btn-sm" onclick="window._exportSlot('${fid}','${sid}')">CSV</button>
-          <button class="btn btn-danger btn-sm" onclick="window._deleteSlot('${fid}','${sid}')">✕</button>
-        </div>
-      </div>
-      <div class="slot-body">
-        ${arr.length === 0
-          ? `<p class="slot-empty">Sin registros</p>`
-          : `<div class="table-wrap"><table>
-              <tr><th>#</th><th>Nombre</th><th>Apellido</th><th>ID</th><th>Correo</th><th></th></tr>
-              ${arr.map((e,i)=>`<tr>
-                <td>${i+1}</td>
-                <td>${e.nombre||''}</td>
-                <td>${e.apellido||''}</td>
-                <td>${e.id||''}</td>
-                <td>${e.correo||''}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="window._deleteReg('${fid}','${sid}',${i})">✕</button></td>
-              </tr>`).join('')}
-            </table></div>`
-        }
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-}
+  // Build slot selector for each registration
+  const slotOptions=Object.entries(slots).map(([sid,s])=>`<option value="${sid}">${s.label}</option>`).join('');
 
-function renderSlotsReadOnly(f, fid, showDelete) {
-  const slots = f.slotsMeta || {};
-  const regs = f.slots || {};
-  if (!Object.keys(slots).length) return `<p class="text-sm text-muted">Sin franjas.</p>`;
-
-  return `<div class="slot-list">${Object.entries(slots).map(([sid, s]) => {
-    const arr = regs[sid] || [];
-    const libre = s.max - arr.length;
-    let badge = libre <= 0 ? `<span class="badge badge-red">Lleno</span>`
-      : `<span class="badge badge-green">${arr.length}/${s.max}</span>`;
-
-    return `<div class="slot-card">
-      <div class="slot-head">
-        <span class="title">📅 ${s.label}</span>
-        <div class="flex gap-2">${badge}</div>
-      </div>
-      <div class="slot-body">
-        ${arr.length === 0
-          ? `<p class="slot-empty">Sin registros</p>`
-          : `<div class="table-wrap"><table>
-              <tr><th>#</th><th>Nombre</th><th>Apellido</th><th>ID</th><th>Correo</th></tr>
-              ${arr.map((e,i)=>`<tr><td>${i+1}</td><td>${e.nombre||''}</td><td>${e.apellido||''}</td><td>${e.id||''}</td><td>${e.correo||''}</td></tr>`).join('')}
-            </table></div>`
-        }
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-}
-
-// ── CREATE FORM ───────────────────────────────────────────────────
-function renderTeacherNewForm(mc) {
-  mc.innerHTML = `
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Crear formulario de horarios</h2>
-    <div class="card">
-      <div class="card-title">Información del formulario</div>
-      <label>Título del formulario</label>
-      <input type="text" id="nf-title" placeholder="Ej: Examen Oral B1.2 · Noviembre 2026">
-      <label>Descripción (opcional)</label>
-      <textarea id="nf-desc" placeholder="Instrucciones para los estudiantes..."></textarea>
+  mc.innerHTML=`
+    <div class="flex gap-2 items-center mb-3">
+      <button class="btn btn-secondary btn-sm" onclick="window._nav('t-forms')">← Volver</button>
+      <h2 style="font-size:1.1rem;font-weight:800;">${f.title}</h2>
     </div>
+
+    <div class="stats-grid">
+      <div class="stat-tile"><div class="num">${Object.keys(slots).length}</div><div class="lbl">Franjas</div></div>
+      <div class="stat-tile"><div class="num">${regEntries.length}</div><div class="lbl">Inscritos</div></div>
+      <div class="stat-tile"><div class="num">${withMeet}</div><div class="lbl">Con Meet</div></div>
+      <div class="stat-tile"><div class="num">${regEntries.length-withMeet}</div><div class="lbl">Sin Meet</div></div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="card">
+      <div class="card-title">Acciones</div>
+      <div class="flex gap-2 wrap">
+        <button class="btn btn-primary" onclick="window._generateMeets('${fid}')" id="btn-gen-meet">
+          🎥 Generar links de Meet
+        </button>
+        <button class="btn btn-green" onclick="window._openSendEmailModal('${fid}')">
+          ✉️ Enviar correos de citación
+        </button>
+        <button class="btn btn-secondary" onclick="window._exportClass('${fid}')">
+          ⬇️ Descargar resumen CSV
+        </button>
+        <button class="btn btn-secondary" onclick="window._modalAddSlot('${fid}')">
+          + Añadir franja
+        </button>
+      </div>
+      <div id="meet-status" class="mt-3"></div>
+    </div>
+
+    <!-- REGISTRATIONS TABLE -->
+    <div class="card" style="padding:0;">
+      <div style="padding:16px 20px 10px;display:flex;justify-content:space-between;align-items:center;">
+        <span class="bold">Estudiantes inscritos</span>
+        <span class="text-sm text-muted">${regEntries.length} registros</span>
+      </div>
+      <div class="table-wrap">
+        <table id="regs-table">
+          <tr>
+            <th><input type="checkbox" id="chk-all" onchange="window._toggleAllCheck(this)"></th>
+            <th>#</th><th>Nombre</th><th>Apellido</th><th>Teléfono</th><th>Correo</th>
+            <th>Franja asignada</th><th>Meet</th><th>Acciones</th>
+          </tr>
+          ${regEntries.length===0?'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:20px;">Sin registros</td></tr>':''}
+          ${regEntries.map(([rid,r],i)=>{
+            const slotLabel=slots[r.slotId]?.label||r.slotId||'—';
+            return `<tr>
+              <td><input type="checkbox" class="reg-chk" value="${rid}"></td>
+              <td>${i+1}</td>
+              <td>${r.nombre||''}</td>
+              <td>${r.apellido||''}</td>
+              <td>${r.telefono||'—'}</td>
+              <td>${r.correo||''}</td>
+              <td>
+                <select class="slot-reassign" data-fid="${fid}" data-rid="${rid}" onchange="window._reassignSlot('${fid}','${rid}',this.value)" style="font-size:.78rem;padding:4px 6px;width:auto;">
+                  ${Object.entries(slots).map(([sid,s])=>`<option value="${sid}" ${r.slotId===sid?'selected':''}>${s.label}</option>`).join('')}
+                </select>
+              </td>
+              <td>${r.meetLink?`<a href="${r.meetLink}" target="_blank" class="meet-pill ready">✅ Meet</a>`:`<span class="meet-pill pending">⏳ Pendiente</span>`}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="window._deleteReg('${fid}','${rid}')">✕</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </table>
+      </div>
+    </div>
+
+    <!-- SLOTS DETAIL -->
     <div class="card">
       <div class="card-title">Franjas horarias</div>
-      <div class="alert alert-info">Agrega cada día y franja. Los estudiantes verán estas opciones al registrarse.</div>
-      <div id="nf-franjas"></div>
-      <button class="btn btn-secondary mt-3 btn-sm" onclick="window._addFranja()">+ Añadir franja</button>
-    </div>
-    <button class="btn btn-primary" onclick="window._saveNewForm()">Crear formulario y obtener link</button>
-    <div id="nf-status" class="mt-3"></div>`;
-
-  window._addFranja(); // start with one row
-}
-
-let franjaCounter = 0;
-window._addFranja = () => {
-  const id = `fr-${++franjaCounter}`;
-  const container = document.getElementById('nf-franjas');
-  const div = document.createElement('div');
-  div.id = id;
-  div.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;';
-  div.innerHTML = `
-    <div class="flex justify-between items-center mb-2">
-      <span class="bold text-sm">Franja ${franjaCounter}</span>
-      <button class="btn btn-danger btn-sm" onclick="document.getElementById('${id}').remove()">✕</button>
-    </div>
-    <div class="form-row">
-      <div>
-        <label>Fecha</label>
-        <input type="date" id="${id}-date">
-      </div>
-      <div>
-        <label>Etiqueta (Ej: Mar 2 jun)</label>
-        <input type="text" id="${id}-lbl" placeholder="Ej: Mar 18 nov">
-      </div>
-    </div>
-    <div class="form-row mt-2">
-      <div>
-        <label>Hora inicio</label>
-        <input type="time" id="${id}-start">
-      </div>
-      <div>
-        <label>Hora fin</label>
-        <input type="time" id="${id}-end">
-      </div>
-      <div>
-        <label>Cupos máx.</label>
-        <input type="number" id="${id}-max" value="3" min="1" max="50">
+      <div id="slots-detail">
+        ${Object.entries(slots).map(([sid,s])=>{
+          const slotRegs=regEntries.filter(([,r])=>r.slotId===sid);
+          const pct=s.max>0?Math.round(slotRegs.length/s.max*100):0;
+          return `<div style="margin-bottom:14px;">
+            <div class="flex justify-between items-center">
+              <span class="bold text-sm">📅 ${s.label}</span>
+              <div class="flex gap-2">
+                <span class="text-sm text-muted">${slotRegs.length}/${s.max} cupos</span>
+                <button class="btn btn-danger btn-sm" onclick="window._deleteSlot('${fid}','${sid}')">✕</button>
+              </div>
+            </div>
+            <div class="prog-bar mt-1"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+          </div>`;
+        }).join('')||'<p class="text-muted text-sm">Sin franjas.</p>'}
       </div>
     </div>`;
-  container.appendChild(div);
-
-  // Auto-fill label from date
-  document.getElementById(`${id}-date`).addEventListener('change', e => {
-    const d = new Date(e.target.value + 'T12:00:00');
-    const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-    const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    const lbl = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
-    const lblEl = document.getElementById(`${id}-lbl`);
-    if (!lblEl.value) lblEl.value = lbl;
-  });
 };
 
-window._saveNewForm = async () => {
-  const title = document.getElementById('nf-title').value.trim();
-  const desc = document.getElementById('nf-desc').value.trim();
-  const status = document.getElementById('nf-status');
-  if (!title) return alert('Escribe un título para el formulario.');
-
-  // Collect franjas
-  const rows = document.querySelectorAll('#nf-franjas > div[id^="fr-"]');
-  const slotsMeta = {};
-  for (const row of rows) {
-    const id = row.id;
-    const lbl = document.getElementById(`${id}-lbl`)?.value?.trim();
-    const start = document.getElementById(`${id}-start`)?.value;
-    const end = document.getElementById(`${id}-end`)?.value;
-    const max = parseInt(document.getElementById(`${id}-max`)?.value) || 3;
-    if (!lbl || !start) { alert(`Completa la franja "${lbl||id}".`); return; }
-    const sid = id;
-    slotsMeta[sid] = { label: `${lbl} · ${start}${end?' – '+end:''}`, max, lbl, start, end };
+// ── GENERATE MEETS ────────────────────────────────────────────────
+window._generateMeets = async (fid) => {
+  const statusEl=document.getElementById('meet-status');
+  const clientId=getGoogleClientId();
+  if (!clientId){
+    statusEl.innerHTML=`<div class="alert alert-warn">⚠️ Esta organización no tiene configurado el Google Client ID. Pídele al administrador que lo configure en Ajustes de la organización.</div>`;
+    return;
   }
-  if (!Object.keys(slotsMeta).length) return alert('Agrega al menos una franja.');
 
-  const formRef = push(ref(db, 'forms'));
-  const fid = formRef.key;
-  await set(formRef, {
-    title, desc,
-    teacherUid: currentUser.uid,
-    teacherEmail: currentUser.email,
-    teacherName: currentUserData.name,
-    orgId: currentUserData.orgId,
-    active: true,
-    createdAt: Date.now(),
-    slotsMeta
-  });
+  statusEl.innerHTML=`<div class="alert alert-info">🔐 Autorizando con Google Calendar... Se abrirá una ventana de Google.</div>`;
 
-  const formUrl = `${location.origin}${location.pathname}#form/${fid}`;
-  status.innerHTML = `
-    <div class="alert alert-success">✅ Formulario creado. Comparte este link con tus estudiantes:</div>
-    <div class="copy-link-box">
-      <input type="text" id="new-link" value="${formUrl}" readonly onclick="this.select()">
-      <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('${formUrl}').then(()=>alert('¡Copiado!'))">Copiar</button>
-    </div>
-    <button class="btn btn-primary mt-3" onclick="window._nav('t-forms')">Ver mis formularios</button>`;
+  try {
+    const token=await authorizeGoogleCalendar(clientId);
+    gCalToken=token;
+    statusEl.innerHTML=`<div class="alert alert-success">✅ Autorizado. Generando links de Meet...</div>`;
+
+    const fSnap=await get(ref(db,`forms/${fid}`));
+    const f=fSnap.val(); if (!f) return;
+    const regs=f.registrations||{};
+    const slots=f.slotsMeta||{};
+
+    let created=0, skipped=0, errors=0;
+    for (const [rid,r] of Object.entries(regs)){
+      if (r.meetLink){ skipped++; continue; }
+      const slot=slots[r.slotId];
+      if (!slot){ errors++; continue; }
+
+      // Build ISO datetimes from slot
+      const datePart=slot.date||new Date().toISOString().split('T')[0];
+      const startISO=`${datePart}T${slot.start}:00`;
+      const endISO=`${datePart}T${(slot.end||slot.start)}:00`;
+
+      try {
+        const result=await createCalendarEventWithMeet(token,{
+          title: f.title,
+          start: startISO,
+          end: endISO,
+          teacherEmail: f.teacherEmail,
+          studentName: `${r.nombre} ${r.apellido}`,
+          studentEmail: r.correo,
+          description: `Examen de inglés — ${f.nivel||''} ${f.grupo||''}\nEstudiante: ${r.nombre} ${r.apellido}`
+        });
+        await update(ref(db,`forms/${fid}/registrations/${rid}`),{
+          meetLink: result.meetLink,
+          calEventId: result.eventId,
+          calEventLink: result.eventLink
+        });
+        created++;
+        statusEl.innerHTML=`<div class="alert alert-info">⏳ Generando... ${created} creados, ${skipped} ya tenían Meet.</div>`;
+      } catch(e){ errors++; console.error('Meet error for',rid,e); }
+
+      // Small delay to avoid rate limits
+      await new Promise(res=>setTimeout(res,300));
+    }
+
+    statusEl.innerHTML=`<div class="alert alert-success">✅ Listo. ${created} links creados, ${skipped} ya existían${errors>0?`, ${errors} errores`:''}.
+      <br><button class="btn btn-secondary btn-sm mt-2" onclick="window._openClassDetail('${fid}')">Actualizar vista</button></div>`;
+
+  } catch(e){
+    statusEl.innerHTML=`<div class="alert alert-danger">❌ Error: ${e.message}</div>`;
+  }
 };
 
-// ── SLOT MANAGEMENT ───────────────────────────────────────────────
-window._modalAddSlot = (fid) => {
-  document.body.insertAdjacentHTML('beforeend', `
-    <div class="modal-overlay" id="slotModal">
-      <div class="modal">
-        <div class="modal-title">Añadir franja horaria</div>
-        <label>Etiqueta</label>
-        <input type="text" id="sm-lbl" placeholder="Ej: Lun 23 nov">
-        <div class="form-row">
-          <div><label>Hora inicio</label><input type="time" id="sm-start"></div>
-          <div><label>Hora fin</label><input type="time" id="sm-end"></div>
-          <div><label>Cupos</label><input type="number" id="sm-max" value="3" min="1"></div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="document.getElementById('slotModal').remove()">Cancelar</button>
-          <button class="btn btn-primary" onclick="window._saveSlot('${fid}')">Añadir</button>
-        </div>
-      </div>
-    </div>`);
-};
-
-window._saveSlot = async (fid) => {
-  const lbl = document.getElementById('sm-lbl').value.trim();
-  const start = document.getElementById('sm-start').value;
-  const end = document.getElementById('sm-end').value;
-  const max = parseInt(document.getElementById('sm-max').value) || 3;
-  if (!lbl || !start) return alert('Completa la etiqueta y hora de inicio.');
-  const sid = `slot-${Date.now()}`;
-  await update(ref(db, `forms/${fid}/slotsMeta`), {
-    [sid]: { label: `${lbl} · ${start}${end?' – '+end:''}`, max, lbl, start, end }
-  });
-  document.getElementById('slotModal').remove();
-  window._nav('t-forms');
-};
-
-window._deleteSlot = async (fid, sid) => {
-  if (!confirm('¿Eliminar esta franja? Se eliminarán también los registros de estudiantes en ella.')) return;
-  await remove(ref(db, `forms/${fid}/slotsMeta/${sid}`));
-  await remove(ref(db, `forms/${fid}/slots/${sid}`));
-  window._nav('t-forms');
-};
-
-window._deleteReg = async (fid, sid, idx) => {
-  if (!confirm('¿Eliminar este registro?')) return;
-  const snap = await get(ref(db, `forms/${fid}/slots/${sid}`));
-  const arr = snap.val() || [];
-  arr.splice(idx, 1);
-  await set(ref(db, `forms/${fid}/slots/${sid}`), arr.length ? arr : null);
-  window._nav('t-forms');
-};
-
-window._toggleFormActive = async (fid, current) => {
-  await update(ref(db, `forms/${fid}`), { active: !current });
-  window._nav('t-forms');
-};
-
-window._deleteForm = async (fid) => {
-  if (!confirm('¿Eliminar este formulario y todos sus registros?')) return;
-  await remove(ref(db, `forms/${fid}`));
-  window._nav('t-forms');
-};
-
-// ── EXPORT ────────────────────────────────────────────────────────
-window._exportSlot = async (fid, sid) => {
-  const [slotSnap, formSnap] = await Promise.all([
-    get(ref(db, `forms/${fid}/slots/${sid}`)),
-    get(ref(db, `forms/${fid}/slotsMeta/${sid}`))
+// ── SEND EMAIL MODAL ──────────────────────────────────────────────
+window._openSendEmailModal = async (fid) => {
+  const [fSnap,orgSnap]=await Promise.all([
+    get(ref(db,`forms/${fid}`)),
+    get(ref(db,`orgs/${currentUserData.orgId}`))
   ]);
-  const arr = slotSnap.val() || [];
-  const meta = formSnap.val() || {};
-  const rows = [['Franja','Nombre','Apellido','ID','Correo'],
-    ...arr.map(e=>[meta.label||sid, e.nombre||'', e.apellido||'', e.id||'', e.correo||''])
-  ];
-  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})),
-    download: `${sid}.csv`
+  const f=fSnap.val(); if (!f) return;
+  const org=orgSnap.val()||{};
+  const regs=Object.entries(f.registrations||{});
+  const slots=f.slotsMeta||{};
+
+  if (!regs.length){ toast('No hay estudiantes inscritos','error'); return; }
+
+  const tpl=org.emailTemplate||'Estimado/a {nombre} {apellido},\n\nTu examen está programado.\n\nFecha: {fecha}\nHora: {hora}\nMeet: {meet}\n\nSaludos';
+  const subj=org.emailSubject||'Citación a Examen de Inglés — {nombre} {apellido}';
+
+  const withMeet=regs.filter(([,r])=>r.meetLink);
+  const withoutMeet=regs.filter(([,r])=>!r.meetLink);
+
+  document.body.insertAdjacentHTML('beforeend',`
+    <div class="modal-overlay" id="emailModal"><div class="modal">
+      <div class="modal-title">✉️ Enviar correos de citación</div>
+      ${withoutMeet.length>0?`<div class="alert alert-warn">⚠️ ${withoutMeet.length} estudiantes aún no tienen link de Meet. Solo se enviará a los que sí tienen.</div>`:''}
+      <div class="alert alert-info">${withMeet.length} estudiantes con Meet listo para recibir citación.</div>
+
+      <label>Selecciona destinatarios</label>
+      <div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:7px;padding:8px;">
+        <div class="check-row" style="border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:4px;">
+          <input type="checkbox" id="em-chk-all" checked onchange="document.querySelectorAll('.em-chk').forEach(c=>c.checked=this.checked)">
+          <label style="margin:0;cursor:pointer;">Todos con Meet (${withMeet.length})</label>
+        </div>
+        ${withMeet.map(([rid,r])=>{
+          const slot=slots[r.slotId]||{};
+          return `<div class="check-row">
+            <input type="checkbox" class="em-chk" value="${rid}" checked data-rid="${rid}">
+            <label style="margin:0;cursor:pointer;">${r.nombre} ${r.apellido} — <span class="text-muted">${r.correo}</span> — ${slot.label||'—'}</label>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <label>Vista previa del correo (primer estudiante)</label>
+      <div style="background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:12px;font-size:.82rem;white-space:pre-wrap;max-height:160px;overflow-y:auto;" id="em-preview">
+        ${buildEmailBody(tpl,withMeet[0]?.[1]||{},slots,f)}
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('emailModal').remove()">Cancelar</button>
+        <button class="btn btn-primary" onclick="window._sendEmails('${fid}')">📨 Abrir correos</button>
+      </div>
+    </div></div>`);
+};
+
+function buildEmailBody(tpl,reg,slots,form){
+  if (!reg||!tpl) return tpl||'';
+  const slot=slots[reg.slotId]||{};
+  return tpl
+    .replace(/{nombre}/g,reg.nombre||'')
+    .replace(/{apellido}/g,reg.apellido||'')
+    .replace(/{correo}/g,reg.correo||'')
+    .replace(/{telefono}/g,reg.telefono||'')
+    .replace(/{fecha}/g,slot.date||slot.lbl||'—')
+    .replace(/{hora}/g,slot.start?(slot.start+(slot.end?' – '+slot.end:'')):'—')
+    .replace(/{meet}/g,reg.meetLink||'(pendiente)')
+    .replace(/{profe}/g,form.teacherName||'')
+    .replace(/{nivel}/g,form.nivel||'')
+    .replace(/{grupo}/g,form.grupo||'')
+    .replace(/{programa}/g,reg.programa||form.programa||'');
+}
+
+window._sendEmails = async (fid) => {
+  const fSnap=await get(ref(db,`forms/${fid}`));
+  const f=fSnap.val(); if (!f) return;
+  const orgSnap=await get(ref(db,`orgs/${currentUserData.orgId}`));
+  const org=orgSnap.val()||{};
+  const regs=f.registrations||{};
+  const slots=f.slotsMeta||{};
+  const tpl=org.emailTemplate||'';
+  const subj=org.emailSubject||'Citación a Examen';
+
+  const checked=[...document.querySelectorAll('.em-chk:checked')].map(c=>c.value);
+  if (!checked.length){ toast('Selecciona al menos un estudiante','error'); return; }
+
+  document.getElementById('emailModal').remove();
+
+  let opened=0;
+  for (const rid of checked){
+    const r=regs[rid]; if (!r) continue;
+    const body=buildEmailBody(tpl,r,slots,f);
+    const subjFilled=subj
+      .replace(/{nombre}/g,r.nombre||'')
+      .replace(/{apellido}/g,r.apellido||'');
+    const mailto=`mailto:${encodeURIComponent(r.correo)}?subject=${encodeURIComponent(subjFilled)}&body=${encodeURIComponent(body)}`;
+    // Open each with a small delay so browser doesn't block popups
+    setTimeout(()=>{ window.open(mailto,'_blank'); },opened*600);
+    opened++;
+  }
+  toast(`✅ Se abrirán ${opened} correos en tu cliente de email`);
+};
+
+// ── REASSIGN SLOT ─────────────────────────────────────────────────
+window._reassignSlot = async (fid,rid,newSlotId) => {
+  await update(ref(db,`forms/${fid}/registrations/${rid}`),{slotId:newSlotId,meetLink:null,calEventId:null});
+  toast('Franja reasignada. El link de Meet fue removido — genera nuevamente.');
+};
+
+// ── DELETE REG ────────────────────────────────────────────────────
+window._deleteReg = async (fid,rid) => {
+  if (!confirm('¿Eliminar este registro?')) return;
+  await remove(ref(db,`forms/${fid}/registrations/${rid}`));
+  window._openClassDetail(fid);
+};
+
+// ── EXPORT CSV ────────────────────────────────────────────────────
+window._exportClass = async (fid) => {
+  const fSnap=await get(ref(db,`forms/${fid}`));
+  const f=fSnap.val(); if (!f) return;
+  const regs=Object.entries(f.registrations||{});
+  const slots=f.slotsMeta||{};
+  const rows=[['Nombre','Apellido','Correo','Teléfono','Franja','Fecha','Hora inicio','Hora fin','Meet','Inscrito']];
+  regs.forEach(([,r])=>{
+    const s=slots[r.slotId]||{};
+    rows.push([r.nombre||'',r.apellido||'',r.correo||'',r.telefono||'',s.label||'',s.date||'',s.start||'',s.end||'',r.meetLink||'',new Date(r.ts||0).toLocaleString('es-CO')]);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})),
+    download:`${f.title.replace(/\s+/g,'-')}.csv`
   });
   a.click();
 };
 
-window._copyLink = (fid) => {
-  const val = document.getElementById(`link-${fid}`)?.value;
-  if (val) navigator.clipboard.writeText(val).then(() => alert('¡Link copiado!'));
+window._toggleAllCheck = (master) => {
+  document.querySelectorAll('.reg-chk').forEach(c=>c.checked=master.checked);
+};
+
+// ── CREATE FORM ───────────────────────────────────────────────────
+function renderTeacherNewForm(mc){
+  mc.innerHTML=`
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Nueva clase</h2>
+    <div class="card">
+      <div class="card-title">📚 Datos de la clase</div>
+      <div class="form-row">
+        <div><label>Nombre del profesor</label><input type="text" id="nf-profe" value="${currentUserData.name||''}"></div>
+        <div><label>Nivel</label><input type="text" id="nf-nivel" placeholder="Ej: B1.2"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Grupo</label><input type="text" id="nf-grupo" placeholder="Ej: G01 — Miércoles 6pm"></div>
+        <div><label>Programa</label><input type="text" id="nf-programa" placeholder="Ej: Inglés General, UNITECNAR"></div>
+      </div>
+      <label>Título del formulario</label>
+      <input type="text" id="nf-title" placeholder="Ej: Examen Oral B1.2 — Noviembre 2026">
+      <label>Instrucciones para los estudiantes (opcional)</label>
+      <textarea id="nf-desc" placeholder="Instrucciones adicionales..."></textarea>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 Franjas horarias</div>
+      <div class="alert alert-info">Agrega cada franja disponible. La duración puede ser 0.5h, 1h, 1.5h, 2h, 3h, etc.</div>
+      <div id="nf-franjas"></div>
+      <button class="btn btn-secondary mt-3 btn-sm" onclick="window._addFranja()">+ Añadir franja</button>
+    </div>
+    <button class="btn btn-primary" onclick="window._saveNewForm()">✅ Crear clase y obtener link</button>
+    <div id="nf-status" class="mt-3"></div>`;
+  window._addFranja();
+}
+
+let franjaCounter=0;
+window._addFranja = () => {
+  const id=`fr-${++franjaCounter}`;
+  const container=document.getElementById('nf-franjas');
+  const div=document.createElement('div');
+  div.id=id; div.className='franja-builder';
+  div.innerHTML=`
+    <div class="franja-builder-head">
+      <span class="bold text-sm">📅 Franja ${franjaCounter}</span>
+      <button class="btn btn-danger btn-sm" onclick="document.getElementById('${id}').remove()">✕ Eliminar</button>
+    </div>
+    <div class="form-row-3">
+      <div><label>Fecha</label><input type="date" id="${id}-date"></div>
+      <div><label>Hora inicio</label><input type="time" id="${id}-start"></div>
+      <div><label>Hora fin</label><input type="time" id="${id}-end"></div>
+    </div>
+    <div class="form-row mt-2">
+      <div>
+        <label>Duración por estudiante</label>
+        <select id="${id}-dur">
+          <option value="0.5">30 min</option>
+          <option value="1" selected>1 hora</option>
+          <option value="1.5">1.5 horas</option>
+          <option value="2">2 horas</option>
+          <option value="3">3 horas</option>
+        </select>
+      </div>
+      <div><label>Cupos máximos</label><input type="number" id="${id}-max" value="5" min="1" max="100"></div>
+    </div>
+    <div class="mt-2">
+      <label>Etiqueta (se genera automáticamente)</label>
+      <input type="text" id="${id}-lbl" placeholder="Ej: Lun 18 nov · 8:00 – 10:00">
+    </div>`;
+  container.appendChild(div);
+
+  // Auto-fill label
+  const autoLabel=()=>{
+    const dateEl=document.getElementById(`${id}-date`);
+    const startEl=document.getElementById(`${id}-start`);
+    const endEl=document.getElementById(`${id}-end`);
+    const lblEl=document.getElementById(`${id}-lbl`);
+    if (!dateEl.value||!startEl.value) return;
+    const d=new Date(dateEl.value+'T12:00:00');
+    const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const dayStr=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+    lblEl.value=`${dayStr} · ${startEl.value}${endEl.value?' – '+endEl.value:''}`;
+  };
+  document.getElementById(`${id}-date`).addEventListener('change',autoLabel);
+  document.getElementById(`${id}-start`).addEventListener('change',autoLabel);
+  document.getElementById(`${id}-end`).addEventListener('change',autoLabel);
+};
+
+window._saveNewForm = async () => {
+  const title=document.getElementById('nf-title').value.trim();
+  const desc=document.getElementById('nf-desc').value.trim();
+  const nivel=document.getElementById('nf-nivel').value.trim();
+  const grupo=document.getElementById('nf-grupo').value.trim();
+  const programa=document.getElementById('nf-programa').value.trim();
+  const profe=document.getElementById('nf-profe').value.trim();
+  const status=document.getElementById('nf-status');
+  if (!title) return alert('Escribe el título de la clase.');
+
+  const rows=document.querySelectorAll('#nf-franjas > div[id^="fr-"]');
+  const slotsMeta={};
+  for (const row of rows){
+    const id=row.id;
+    const lbl=document.getElementById(`${id}-lbl`)?.value?.trim();
+    const start=document.getElementById(`${id}-start`)?.value;
+    const end=document.getElementById(`${id}-end`)?.value;
+    const dur=parseFloat(document.getElementById(`${id}-dur`)?.value)||1;
+    const max=parseInt(document.getElementById(`${id}-max`)?.value)||5;
+    const date=document.getElementById(`${id}-date`)?.value;
+    if (!lbl||!start||!date){ alert(`Completa fecha y hora de inicio en la franja ${id}.`); return; }
+    const sid='slot-'+Date.now()+'-'+Math.random().toString(36).substr(2,4);
+    slotsMeta[sid]={label:lbl,max,start,end:end||'',date,dur,lbl};
+  }
+  if (!Object.keys(slotsMeta).length) return alert('Agrega al menos una franja.');
+
+  const formRef=push(ref(db,'forms'));
+  const fid=formRef.key;
+  await set(formRef,{
+    title,desc,nivel,grupo,programa,
+    teacherName:profe||currentUserData.name,
+    teacherUid:currentUser.uid,
+    teacherEmail:currentUser.email,
+    orgId:currentUserData.orgId,
+    active:true,
+    createdAt:Date.now(),
+    slotsMeta
+  });
+
+  const formUrl=`${location.origin}${location.pathname}#form/${fid}`;
+  status.innerHTML=`
+    <div class="alert alert-success">✅ Clase creada. Comparte este link con tus estudiantes:</div>
+    <div class="copy-link-box">
+      <input type="text" value="${formUrl}" readonly onclick="this.select()">
+      <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('${formUrl}').then(()=>toast('¡Copiado!'))">Copiar</button>
+    </div>
+    <button class="btn btn-primary mt-3" onclick="window._nav('t-forms')">Ver mis clases →</button>`;
+};
+
+// ── SLOT MANAGEMENT ───────────────────────────────────────────────
+window._modalAddSlot=(fid)=>{
+  document.body.insertAdjacentHTML('beforeend',`
+    <div class="modal-overlay" id="slotModal"><div class="modal">
+      <div class="modal-title">Añadir franja horaria</div>
+      <div class="form-row-3">
+        <div><label>Fecha</label><input type="date" id="sm-date"></div>
+        <div><label>Hora inicio</label><input type="time" id="sm-start"></div>
+        <div><label>Hora fin</label><input type="time" id="sm-end"></div>
+      </div>
+      <div class="form-row mt-2">
+        <div><label>Cupos</label><input type="number" id="sm-max" value="5" min="1"></div>
+        <div>
+          <label>Duración por estudiante</label>
+          <select id="sm-dur">
+            <option value="0.5">30 min</option><option value="1" selected>1 hora</option>
+            <option value="1.5">1.5h</option><option value="2">2h</option><option value="3">3h</option>
+          </select>
+        </div>
+      </div>
+      <label>Etiqueta</label>
+      <input type="text" id="sm-lbl" placeholder="Ej: Lun 18 nov · 8:00 – 10:00">
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('slotModal').remove()">Cancelar</button>
+        <button class="btn btn-primary" onclick="window._saveSlot('${fid}')">Añadir</button>
+      </div>
+    </div></div>`);
+};
+
+window._saveSlot=async(fid)=>{
+  const lbl=document.getElementById('sm-lbl').value.trim();
+  const start=document.getElementById('sm-start').value;
+  const end=document.getElementById('sm-end').value;
+  const max=parseInt(document.getElementById('sm-max').value)||5;
+  const dur=parseFloat(document.getElementById('sm-dur').value)||1;
+  const date=document.getElementById('sm-date').value;
+  if (!lbl||!start) return alert('Completa etiqueta y hora de inicio.');
+  const sid='slot-'+Date.now();
+  await update(ref(db,`forms/${fid}/slotsMeta`),{[sid]:{label:lbl,max,start,end,date,dur,lbl}});
+  document.getElementById('slotModal').remove();
+  window._openClassDetail(fid);
+};
+
+window._deleteSlot=async(fid,sid)=>{
+  if (!confirm('¿Eliminar esta franja? Los estudiantes asignados perderán su slot.')) return;
+  await remove(ref(db,`forms/${fid}/slotsMeta/${sid}`));
+  // Remove all registrations in this slot
+  const fSnap=await get(ref(db,`forms/${fid}/registrations`));
+  const regs=fSnap.val()||{};
+  const toDelete=Object.entries(regs).filter(([,r])=>r.slotId===sid);
+  for (const [rid] of toDelete) await remove(ref(db,`forms/${fid}/registrations/${rid}`));
+  window._openClassDetail(fid);
+};
+
+window._toggleFormActive=async(fid,current)=>{
+  await update(ref(db,`forms/${fid}`),{active:!current});
+  window._nav('t-forms');
+};
+
+window._deleteForm=async(fid)=>{
+  if (!confirm('¿Eliminar esta clase y todos sus registros?')) return;
+  await remove(ref(db,`forms/${fid}`));
+  window._nav('t-forms');
+};
+
+window._copyLink=(fid)=>{
+  const val=document.getElementById(`link-${fid}`)?.value;
+  if (val) navigator.clipboard.writeText(val).then(()=>toast('¡Link copiado!'));
 };
 
 // ══════════════════════════════════════════════════════════════════
-// STUDENT FORM
+// STUDENT FORM (PUBLIC)
 // ══════════════════════════════════════════════════════════════════
-async function renderStudentForm(fid) {
-  const formSnap = await get(ref(db, `forms/${fid}`));
-  const f = formSnap.val();
+async function renderStudentForm(fid){
+  const fSnap=await get(ref(db,`forms/${fid}`));
+  const f=fSnap.val();
 
-  if (!f) {
-    document.getElementById('app').innerHTML = `<div style="text-align:center;padding:60px;"><h2>Formulario no encontrado</h2><p class="text-muted">El link puede estar incorrecto o el formulario fue eliminado.</p></div>`;
+  if (!f){
+    document.getElementById('app').innerHTML=`<div style="text-align:center;padding:60px;"><h2>Formulario no encontrado</h2><p class="text-muted">El link puede estar incorrecto.</p></div>`;
+    return;
+  }
+  if (!f.active){
+    document.getElementById('app').innerHTML=`<div style="text-align:center;padding:60px;"><h2>Formulario cerrado</h2><p class="text-muted">El período de registro ya cerró.</p></div>`;
     return;
   }
 
-  if (!f.active) {
-    document.getElementById('app').innerHTML = `<div style="text-align:center;padding:60px;"><h2>Formulario cerrado</h2><p class="text-muted">El período de registro ya cerró.</p></div>`;
-    return;
-  }
+  const orgSnap=await get(ref(db,`orgs/${f.orgId}`));
+  const org=orgSnap.val()||{};
+  const logoHtml=org.logoUrl?`<img src="${org.logoUrl}" alt="${org.name}" style="height:60px;object-fit:contain;">`:`<span style="color:#fff;font-weight:800;font-size:1.1rem;">${org.name||'TestSchedule'}</span>`;
 
-  // Load org logo
-  const orgSnap = await get(ref(db, `orgs/${f.orgId}`));
-  const org = orgSnap.val() || {};
-
-  const logoHtml = org.logoUrl ? `<img src="${org.logoUrl}" alt="${org.name}" style="height:60px;object-fit:contain;">` : `<span style="color:#fff;font-weight:800;font-size:1.1rem;">${org.name||'TestSchedule'}</span>`;
-
-  document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML=`
     <div id="studentPage">
       <div class="student-header">
         ${logoHtml}
         <div class="info">
           <h1>${f.title}</h1>
-          <p>${f.desc||'Selecciona tu franja horaria para el examen oral'}</p>
+          <p>Prof. ${f.teacherName||''} · ${f.nivel||''} ${f.grupo||''}</p>
+          ${f.desc?`<p style="margin-top:4px;font-size:.78rem;">${f.desc}</p>`:''}
         </div>
       </div>
       <div class="student-body">
@@ -1089,108 +1283,104 @@ async function renderStudentForm(fid) {
           <div class="card">
             <div class="card-title">📋 Tus datos</div>
             <div class="form-row">
-              <div><label>Nombre</label><input type="text" id="sf-nombre" placeholder="Tu nombre"></div>
-              <div><label>Apellido</label><input type="text" id="sf-apellido" placeholder="Tu apellido"></div>
+              <div><label>Nombre *</label><input type="text" id="sf-nombre" placeholder="Tu nombre"></div>
+              <div><label>Apellido *</label><input type="text" id="sf-apellido" placeholder="Tu apellido"></div>
             </div>
             <div class="form-row">
-              <div><label>Número de ID</label><input type="number" id="sf-id" placeholder="Ej: 1234567890"></div>
-              <div><label>Correo electrónico</label><input type="email" id="sf-correo" placeholder="tu@correo.com"></div>
+              <div><label>Correo electrónico *</label><input type="email" id="sf-correo" placeholder="tu@correo.com"></div>
+              <div><label>Teléfono / WhatsApp *</label><input type="tel" id="sf-tel" placeholder="+57 300 000 0000"></div>
             </div>
           </div>
           <div class="card">
-            <div class="card-title">📅 Escoge tu franja</div>
+            <div class="card-title">📅 Escoge tu franja horaria</div>
             <div id="sf-slots" class="franja-pick-grid"></div>
           </div>
           <div id="sf-err" class="alert alert-warn hidden">⚠️ Completa todos tus datos y selecciona una franja.</div>
-          <button class="btn btn-primary btn-block mt-3" id="sf-btn" onclick="window._submitForm('${fid}')">Confirmar registro</button>
+          <button class="btn btn-primary btn-block mt-3" id="sf-btn" onclick="window._submitStudentForm('${fid}')">✅ Confirmar inscripción</button>
         </div>
         <div id="sf-confirm" class="hidden">
           <div class="confirm-wrap">
             <div class="confirm-icon">✅</div>
-            <h2>¡Registro exitoso!</h2>
-            <p>Este es tu horario de examen oral:</p>
+            <h2>¡Inscripción exitosa!</h2>
+            <p class="text-muted mt-2">Tu horario de examen oral:</p>
             <div class="confirm-box" id="sf-confirm-detail"></div>
-            <p>Gracias por tu registro. <strong>Espera la citación oficial en tu correo en los próximos días.</strong></p>
+            <p class="mt-3 text-muted">Recibirás la citación oficial con el link de Google Meet en tu correo en los próximos días.</p>
           </div>
         </div>
       </div>
     </div>`;
 
-  // Load slots live
-  let selectedSlot = null;
-  onValue(ref(db, `forms/${fid}/slots`), (snap) => {
-    const regsData = snap.val() || {};
-    renderStudentSlots(f.slotsMeta||{}, regsData, selectedSlot, (sid) => {
-      selectedSlot = sid;
-      renderStudentSlots(f.slotsMeta||{}, regsData, selectedSlot, null);
+  let selectedSlot=null;
+  onValue(ref(db,`forms/${fid}/registrations`),(snap)=>{
+    const regsData=snap.val()||{};
+    // Count per slot
+    const countBySlot={};
+    Object.values(regsData).forEach(r=>{
+      countBySlot[r.slotId]=(countBySlot[r.slotId]||0)+1;
+    });
+    renderStudentSlots(f.slotsMeta||{},countBySlot,selectedSlot,(sid)=>{
+      selectedSlot=sid;
+      renderStudentSlots(f.slotsMeta||{},countBySlot,selectedSlot,null);
     });
   });
 
-  window._submitForm = async (fid) => {
-    const nombre = document.getElementById('sf-nombre').value.trim();
-    const apellido = document.getElementById('sf-apellido').value.trim();
-    const id = document.getElementById('sf-id').value.trim();
-    const correo = document.getElementById('sf-correo').value.trim();
-    const err = document.getElementById('sf-err');
+  window._submitStudentForm=async(fid)=>{
+    const nombre=document.getElementById('sf-nombre').value.trim();
+    const apellido=document.getElementById('sf-apellido').value.trim();
+    const correo=document.getElementById('sf-correo').value.trim();
+    const telefono=document.getElementById('sf-tel').value.trim();
+    const err=document.getElementById('sf-err');
 
-    if (!nombre || !apellido || !id || !correo || !selectedSlot) {
+    if (!nombre||!apellido||!correo||!telefono||!selectedSlot){
       err.classList.remove('hidden'); return;
     }
     err.classList.add('hidden');
-    const btn = document.getElementById('sf-btn');
-    btn.disabled = true; btn.textContent = 'Registrando...';
+    const btn=document.getElementById('sf-btn');
+    btn.disabled=true; btn.textContent='Registrando...';
 
-    const { runTransaction } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
-    const slotRef = ref(db, `forms/${fid}/slots/${selectedSlot}`);
-    const metaSnap = await get(ref(db, `forms/${fid}/slotsMeta/${selectedSlot}`));
-    const meta = metaSnap.val() || {};
-
-    try {
-      const result = await runTransaction(slotRef, (current) => {
-        const arr = current || [];
-        if (arr.length >= meta.max) return; // abort
-        return [...arr, { nombre, apellido, id, correo, ts: Date.now() }];
-      });
-
-      if (result.committed) {
-        document.getElementById('sf-form').classList.add('hidden');
-        document.getElementById('sf-confirm').classList.remove('hidden');
-        document.getElementById('sf-confirm-detail').innerHTML = `
-          <p><strong>Nombre:</strong> ${nombre} ${apellido}</p>
-          <p><strong>ID:</strong> ${id}</p>
-          <p><strong>Correo:</strong> ${correo}</p>
-          <p><strong>Horario:</strong> ${meta.label||selectedSlot}</p>`;
-      } else {
-        alert('Este horario se llenó mientras registrabas. Escoge otro.');
-        btn.disabled = false; btn.textContent = 'Confirmar registro';
-      }
-    } catch(e) {
-      alert('Error al guardar. Intenta de nuevo.');
-      btn.disabled = false; btn.textContent = 'Confirmar registro';
+    // Check if slot is still available
+    const fSnap2=await get(ref(db,`forms/${fid}`));
+    const f2=fSnap2.val(); if (!f2){btn.disabled=false;btn.textContent='Confirmar inscripción';return;}
+    const regs=f2.registrations||{};
+    const slotMeta=f2.slotsMeta?.[selectedSlot];
+    if (!slotMeta){alert('Franja no encontrada.');btn.disabled=false;return;}
+    const countInSlot=Object.values(regs).filter(r=>r.slotId===selectedSlot).length;
+    if (countInSlot>=slotMeta.max){
+      alert('Este horario ya se llenó mientras registrabas. Escoge otro.');
+      btn.disabled=false; btn.textContent='Confirmar inscripción'; return;
     }
+
+    // Save registration
+    const regRef=push(ref(db,`forms/${fid}/registrations`));
+    await set(regRef,{nombre,apellido,correo,telefono,slotId:selectedSlot,ts:Date.now(),meetLink:null});
+
+    document.getElementById('sf-form').classList.add('hidden');
+    document.getElementById('sf-confirm').classList.remove('hidden');
+    document.getElementById('sf-confirm-detail').innerHTML=`
+      <p><strong>Nombre:</strong> ${nombre} ${apellido}</p>
+      <p><strong>Correo:</strong> ${correo}</p>
+      <p><strong>Teléfono:</strong> ${telefono}</p>
+      <p><strong>Horario:</strong> ${slotMeta.label}</p>`;
   };
 }
 
-function renderStudentSlots(slotsMeta, regsData, selectedSlot, onSelect) {
-  const grid = document.getElementById('sf-slots');
+function renderStudentSlots(slotsMeta,countBySlot,selectedSlot,onSelect){
+  const grid=document.getElementById('sf-slots');
   if (!grid) return;
-  grid.innerHTML = Object.entries(slotsMeta).map(([sid, s]) => {
-    const arr = regsData[sid] || [];
-    const libre = s.max - arr.length;
-    const full = libre <= 0;
-    const isSelected = selectedSlot === sid;
-    const badgeText = full ? 'Lleno' : libre === 1 ? '1 lugar' : `${libre} lugares`;
-    const badgeCls = full ? 'badge-red' : libre === 1 ? 'badge-yellow' : 'badge-green';
+  grid.innerHTML=Object.entries(slotsMeta).map(([sid,s])=>{
+    const count=countBySlot[sid]||0;
+    const libre=s.max-count;
+    const full=libre<=0;
+    const isSelected=selectedSlot===sid;
+    const badgeText=full?'Lleno':libre===1?'1 lugar':`${libre} lugares`;
+    const badgeCls=full?'badge-red':libre<=2?'badge-yellow':'badge-green';
     return `<button class="franja-pick-btn ${full?'fp-full':''} ${isSelected?'fp-selected':''}"
       ${full?'disabled':''} onclick="window._selectSlot('${sid}')">
-      <span>${s.label}</span>
+      <span>📅 ${s.label}</span>
       <span class="badge ${badgeCls}">${badgeText}</span>
     </button>`;
   }).join('');
-
-  if (onSelect) {
-    window._selectSlot = (sid) => onSelect(sid);
-  }
+  if (onSelect) window._selectSlot=(sid)=>onSelect(sid);
 }
 
 </script>
