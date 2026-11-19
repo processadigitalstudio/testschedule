@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TestSchedule</title>
+<style>
+:root {
+  --brand: #2D3E50;
+  --accent: #1DB8A8;
+  --accent2: #17a094;
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #2D3E50;
+  --muted: #6b7280;
+  --border: #e2e8f0;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --success: #10b981;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── UTILS ── */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.w100 { width: 100%; }
+.text-sm { font-size: 0.82rem; }
+.text-muted { color: var(--muted); }
+.bold { font-weight: 700; }
+.text-accent { color: var(--accent); }
+.text-danger { color: var(--danger); }
+
+/* ── LAYOUT ── */
+#app { min-height: 100vh; }
+
+/* ── TOP NAV ── */
+.topnav {
+  background: var(--brand); color: #fff;
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topnav-logo { display: flex; align-items: center; gap: 12px; }
+.topnav-logo img { height: 36px; object-fit: contain; }
+.topnav-logo span { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; }
+.topnav-right { display: flex; align-items: center; gap: 16px; }
+.topnav-right .user-pill {
+  background: rgba(255,255,255,0.12); border-radius: 20px;
+  padding: 4px 14px; font-size: 0.8rem;
+}
+.btn-logout {
+  background: none; border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; border-radius: 6px; padding: 5px 14px;
+  font-size: 0.8rem; cursor: pointer; transition: background .15s;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.1); }
+
+/* ── SIDEBAR + MAIN ── */
+.shell { display: flex; min-height: calc(100vh - 56px); }
+.sidebar {
+  width: 220px; background: var(--brand);
+  padding: 16px 0; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.sidebar a {
+  display: block; padding: 10px 20px;
+  color: rgba(255,255,255,0.75); text-decoration: none;
+  font-size: 0.88rem; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.sidebar a:hover, .sidebar a.active {
+  color: #fff; background: rgba(255,255,255,0.08);
+  border-left-color: var(--accent);
+}
+.sidebar-section {
+  padding: 10px 20px 4px;
+  font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 1px; color: rgba(255,255,255,0.4);
+}
+.main { flex: 1; padding: 28px; overflow-y: auto; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--card); border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07); padding: 24px;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 16px;
+  padding-bottom: 10px; border-bottom: 2px solid var(--accent);
+  color: var(--brand);
+}
+
+/* ── FORMS ── */
+label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; margin-top: 12px; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], input[type=time], select, textarea {
+  width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+  border-radius: 7px; font-size: 0.92rem; color: var(--text);
+  background: #fff; transition: border-color .15s;
+  font-family: inherit;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+textarea { resize: vertical; min-height: 60px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media(max-width:600px) { .form-row, .form-row-3 { grid-template-columns: 1fr; } }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 20px; border-radius: 7px; border: none;
+  font-size: 0.88rem; font-weight: 700; cursor: pointer;
+  transition: all .15s; text-decoration: none;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-secondary { background: #e8edf4; color: var(--brand); }
+.btn-secondary:hover { background: #d8e2ef; }
+.btn-danger { background: #fde8e8; color: var(--danger); }
+.btn-danger:hover { background: #fbd5d5; }
+.btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+.btn-block { width: 100%; justify-content: center; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 700;
+}
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-yellow { background: #fef3c7; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-gray { background: #f3f4f6; color: #374151; }
+
+/* ── STAT TILES ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.stat-tile { background: var(--card); border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+.stat-tile .num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+.stat-tile .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+th { background: #f8fafc; padding: 10px 14px; text-align: left; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 10px 14px; border-top: 1px solid var(--border); }
+tr:hover td { background: #fafbfc; }
+
+/* ── SLOT CARDS ── */
+.slot-list { display: flex; flex-direction: column; gap: 12px; }
+.slot-card { background: var(--card); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+.slot-head { background: var(--brand); color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+.slot-head .title { font-weight: 700; font-size: 0.9rem; }
+.slot-body { padding: 0; }
+.slot-empty { padding: 14px 16px; color: var(--muted); font-size: 0.85rem; font-style: italic; }
+
+/* ── FRANJA SELECTOR (teacher create form) ── */
+.franja-row {
+  display: grid; grid-template-columns: auto 1fr 1fr 1fr auto;
+  gap: 8px; align-items: center; padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.franja-row:last-child { border-bottom: none; }
+
+/* ── LOGIN PAGE ── */
+#loginPage {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; background: var(--brand);
+}
+.login-box {
+  background: var(--card); border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  padding: 40px; width: 380px; max-width: 95vw;
+}
+.login-logo { text-align: center; margin-bottom: 24px; }
+.login-logo img { height: 60px; object-fit: contain; }
+.login-logo .app-name { font-size: 1.3rem; font-weight: 800; color: var(--brand); margin-top: 8px; }
+.login-logo .app-sub { font-size: 0.8rem; color: var(--muted); }
+.login-error { background: #fee2e2; color: var(--danger); border-radius: 6px; padding: 8px 12px; font-size: 0.84rem; margin-top: 10px; }
+
+/* ── STUDENT FORM PAGE ── */
+#studentPage { min-height: 100vh; }
+.student-header { background: var(--brand); padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
+.student-header img { height: 60px; object-fit: contain; }
+.student-header .info { color: #fff; }
+.student-header .info h1 { font-size: 1.1rem; font-weight: 700; }
+.student-header .info p { font-size: 0.82rem; color: var(--accent); margin-top: 2px; }
+.student-body { max-width: 680px; margin: 28px auto; padding: 0 16px; }
+
+/* ── FRANJA BUTTONS (student) ── */
+.franja-pick-grid { display: flex; flex-direction: column; gap: 10px; }
+.franja-pick-btn {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px;
+  background: #fff; cursor: pointer; font-size: 0.92rem; color: var(--text);
+  transition: all .15s; width: 100%; text-align: left;
+}
+.franja-pick-btn:hover:not(.fp-full) { border-color: var(--accent); background: #f0faf9; }
+.franja-pick-btn.fp-selected { border-color: var(--accent); background: #e0f7f5; }
+.franja-pick-btn.fp-full { opacity: 0.5; cursor: not-allowed; background: #f9fafb; }
+
+/* ── CONFIRM ── */
+.confirm-wrap { text-align: center; padding: 40px 20px; }
+.confirm-icon { font-size: 3rem; margin-bottom: 12px; }
+.confirm-box { background: #f0faf9; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: left; }
+.confirm-box p { margin: 5px 0; font-size: 0.92rem; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center; z-index: 999;
+}
+.modal {
+  background: var(--card); border-radius: 12px; padding: 28px;
+  width: 540px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--brand); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+
+/* ── ALERT ── */
+.alert { padding: 10px 14px; border-radius: 7px; font-size: 0.86rem; margin-bottom: 14px; }
+.alert-info { background: #dbeafe; color: #1e40af; }
+.alert-success { background: #d1fae5; color: #065f46; }
+.alert-warn { background: #fef3c7; color: #92400e; }
+
+/* ── COPY LINK ── */
+.copy-link-box {
+  display: flex; gap: 8px; align-items: center;
+  background: #f8fafc; border: 1.5px solid var(--border); border-radius: 7px;
+  padding: 8px 12px; margin-top: 8px;
+}
+.copy-link-box input { background: none; border: none; flex: 1; font-size: 0.82rem; color: var(--muted); }
+.copy-link-box input:focus { outline: none; }
+
+/* ── ORG LOGO PREVIEW ── */
+.logo-preview { width: 120px; height: 60px; object-fit: contain; border: 1px solid var(--border); border-radius: 6px; background: #f8fafc; padding: 4px; }
+
+/* ── PAGE TABS ── */
+.page-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+.page-tab { padding: 9px 20px; border: none; background: none; font-size: 0.88rem; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; }
+.page-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FIREBASE + APP LOGIC
+═══════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
+  getDatabase, ref, set, get, push, onValue, remove, update, serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+// ── FIREBASE CONFIG (REPLACE WITH YOUR NEW PROJECT) ──────────────
+const firebaseConfig = {
+  apiKey: "REPLACE_API_KEY",
+  authDomain: "REPLACE_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://REPLACE_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId: "REPLACE_PROJECT_ID",
+  storageBucket: "REPLACE_PROJECT_ID.appspot.com",
+  messagingSenderId: "REPLACE_SENDER_ID",
+  appId: "REPLACE_APP_ID"
+};
+// ─────────────────────────────────────────────────────────────────
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getDatabase(fbApp);
+
+// ── ROUTER ────────────────────────────────────────────────────────
+const hash = location.hash; // e.g. #form/abc123
+let currentUser = null;
+let currentUserData = null;
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    const snap = await get(ref(db, `users/${user.uid}`));
+    currentUserData = snap.val();
+    renderAuthed();
+  } else {
+    currentUser = null;
+    currentUserData = null;
+    if (hash.startsWith('#form/')) {
+      renderStudentForm(hash.replace('#form/', ''));
+    } else {
+      renderLogin();
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════════════════
+function renderLogin() {
+  document.getElementById('app').innerHTML = `
+    <div id="loginPage">
+      <div class="login-box">
+        <div class="login-logo">
+          <div style="font-size:2rem;">📅</div>
+          <div class="app-name">TestSchedule</div>
+          <div class="app-sub">Gestión de horarios de exámenes</div>
+        </div>
+        <label>Correo electrónico</label>
+        <input type="email" id="li-email" placeholder="tu@correo.com" autocomplete="username">
+        <label>Contraseña</label>
+        <input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')window._login()">
+        <div id="li-err" class="login-error hidden"></div>
+        <button class="btn btn-primary btn-block mt-3" onclick="window._login()">Entrar</button>
+      </div>
+    </div>`;
+}
+
+window._login = async () => {
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  const err = document.getElementById('li-err');
+  err.classList.add('hidden');
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    err.textContent = 'Correo o contraseña incorrectos.';
+    err.classList.remove('hidden');
+  }
+};
+
+// ══════════════════════════════════════════════════════════════════
+// ROUTE AFTER LOGIN
+// ══════════════════════════════════════════════════════════════════
+function renderAuthed() {
+  if (!currentUserData) {
+    renderLogin();
+    return;
+  }
+  const role = currentUserData.role;
+  if (role === 'superadmin') renderSuperAdmin();
+  else if (role === 'admin') renderOrgAdmin();
+  else if (role === 'teacher') renderTeacher();
+  else renderLogin();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SHARED NAV HELPERS
+// ══════════════════════════════════════════════════════════════════
+function navHTML(links, orgLogo, orgName) {
+  const logoSrc = orgLogo
+    ? `<img src="${orgLogo}" alt="${orgName}">`
+    : `<span>${orgName || 'TestSchedule'}</span>`;
+  return `
+    <div class="topnav">
+      <div class="topnav-logo">${logoSrc}</div>
+      <div class="topnav-right">
+        <span class="user-pill">${currentUser.email}</span>
+        <button class="btn-logout" onclick="window._logout()">Salir</button>
+      </div>
+    </div>
+    <div class="shell">
+      <nav class="sidebar">
+        ${links.map(l => `<a href="#" onclick="window._nav('${l.id}');return false;" id="nav-${l.id}">${l.icon} ${l.label}</a>`).join('')}
+      </nav>
+      <div class="main" id="mainContent"></div>
+    </div>`;
+}
+
+window._logout = () => signOut(auth);
+
+window._nav = (id) => {
+  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById('nav-'+id);
+  if (el) el.classList.add('active');
+  if (currentUserData.role === 'superadmin') renderSASection(id);
+  else if (currentUserData.role === 'admin') renderAdminSection(id);
+  else if (currentUserData.role === 'teacher') renderTeacherSection(id);
+};
+
+function activateNav(id) {
+  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById('nav-'+id);
+  if (el) el.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SUPER ADMIN
+// ══════════════════════════════════════════════════════════════════
+function renderSuperAdmin() {
+  const links = [
+    { id:'sa-orgs', icon:'🏢', label:'Organizaciones' },
+    { id:'sa-users', icon:'👥', label:'Usuarios' },
+    { id:'sa-forms', icon:'📋', label:'Todos los formularios' },
+  ];
+  document.getElementById('app').innerHTML = navHTML(links, null, 'TestSchedule · SuperAdmin');
+  window._nav('sa-orgs');
+}
+
+async function renderSASection(id) {
+  activateNav(id);
+  const mc = document.getElementById('mainContent');
+  if (id === 'sa-orgs') await renderSAOrgs(mc);
+  else if (id === 'sa-users') await renderSAUsers(mc);
+  else if (id === 'sa-forms') await renderSAForms(mc);
+}
+
+// ── ORGS ──────────────────────────────────────────────────────────
+async function renderSAOrgs(mc) {
+  const snap = await get(ref(db, 'orgs'));
+  const orgs = snap.val() || {};
+  mc.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h2 style="font-size:1.1rem;font-weight:800;">Organizaciones</h2>
+      <button class="btn btn-primary btn-sm" onclick="window._modalNewOrg()">+ Nueva organización</button>
+    </div>
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <tr><th>Organización</th><th>Logo</th><th>Slug</th><th>Acciones</th></tr>
+          ${Object.entries(orgs).map(([id, o]) => `
+            <tr>
+              <td class="bold">${o.name}</td>
+              <td>${o.logoUrl ? `<img src="${o.logoUrl}" style="height:32px;object-fit:contain;">` : '—'}</td>
+              <td><span class="badge badge-gray">${id}</span></td>
+              <td>
+                <button class="btn btn-secondary btn-sm" onclick="window._modalEditOrg('${id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="window._deleteOrg('${id}')">Eliminar</button>
+              </td>
+            </tr>`).join('') || '<tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px;">Sin organizaciones aún</td></tr>'}
+        </table>
+      </div>
+    </div>`;
+}
+
+window._modalNewOrg = () => showOrgModal(null, null);
+window._modalEditOrg = async (id) => {
+  const snap = await get(ref(db, `orgs/${id}`));
+  showOrgModal(id, snap.val());
+};
+
+function showOrgModal(orgId, data) {
+  const isEdit = !!orgId;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-overlay" id="orgModal">
+      <div class="modal">
+        <div class="modal-title">${isEdit ? 'Editar' : 'Nueva'} organización</div>
+        <label>Nombre de la organización</label>
+        <input type="text" id="om-name" value="${data?.name||''}">
+        <label>URL del logo (pega el enlace de la imagen)</label>
+        <input type="text" id="om-logo" placeholder="https://..." value="${data?.logoUrl||''}">
+        <div id="om-logo-preview" class="mt-2"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('orgModal').remove()">Cancelar</button>
+          <button class="btn btn-primary" onclick="window._saveOrg('${orgId||''}')">Guardar</button>
+        </div>
+      </div>
+    </div>`);
+  document.getElementById('om-logo').addEventListener('input', e => {
+    const p = document.getElementById('om-logo-preview');
+    p.innerHTML = e.target.value ? `<img src="${e.target.value}" class="logo-preview" onerror="this.style.display='none'">` : '';
+  });
+  if (data?.logoUrl) {
+    document.getElementById('om-logo-preview').innerHTML = `<img src="${data.logoUrl}" class="logo-preview">`;
+  }
+}
+
+window._saveOrg = async (orgId) => {
+  const name = document.getElementById('om-name').value.trim();
+  const logoUrl = document.getElementById('om-logo').value.trim();
+  if (!name) return alert('Escribe el nombre de la organización.');
+  const id = orgId || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g,'');
+  await set(ref(db, `orgs/${id}`), { name, logoUrl });
+  document.getElementById('orgModal').remove();
+  window._nav('sa-orgs');
+};
+
+window._deleteOrg = async (id) => {
+  if (!confirm('¿Eliminar esta organización? Se eliminarán todos sus datos.')) return;
+  await remove(ref(db, `orgs/${id}`));
+  window._nav('sa-orgs');
+};
+
+// ── USERS ─────────────────────────────────────────────────────────
+async function renderSAUsers(mc) {
+  const [usersSnap, orgsSnap] = await Promise.all([
+    get(ref(db, 'users')),
+    get(ref(db, 'orgs'))
+  ]);
+  const users = usersSnap.val() || {};
+  const orgs = orgsSnap.val() || {};
+
+  mc.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h2 style="font-size:1.1rem;font-weight:800;">Usuarios</h2>
+      <button class="btn btn-primary btn-sm" onclick="window._modalNewUser()">+ Nuevo usuario</button>
+    </div>
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Organización</th></tr>
+          ${Object.entries(users).map(([uid, u]) => `
+            <tr>
+              <td class="bold">${u.name||'—'}</td>
+              <td>${u.email}</td>
+              <td><span class="badge ${u.role==='superadmin'?'badge-blue':u.role==='admin'?'badge-yellow':'badge-green'}">${u.role}</span></td>
+              <td>${u.orgId ? (orgs[u.orgId]?.name || u.orgId) : '—'}</td>
+            </tr>`).join('') || '<tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px;">Sin usuarios</td></tr>'}
+        </table>
+      </div>
+    </div>`;
+}
+
+window._modalNewUser = async () => {
+  const orgsSnap = await get(ref(db, 'orgs'));
+  const orgs = orgsSnap.val() || {};
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-overlay" id="userModal">
+      <div class="modal">
+        <div class="modal-title">Crear usuario</div>
+        <div class="form-row">
+          <div><label>Nombre</label><input type="text" id="um-name"></div>
+          <div><label>Correo</label><input type="email" id="um-email"></div>
+        </div>
+        <label>Contraseña temporal</label>
+        <input type="text" id="um-pass" placeholder="Mínimo 6 caracteres">
+        <label>Rol</label>
+        <select id="um-role" onchange="window._toggleOrgField()">
+          <option value="teacher">Profesor</option>
+          <option value="admin">Admin de organización</option>
+          <option value="superadmin">Super Admin</option>
+        </select>
+        <div id="um-org-wrap">
+          <label>Organización</label>
+          <select id="um-org">
+            <option value="">— Selecciona —</option>
+            ${Object.entries(orgs).map(([id,o])=>`<option value="${id}">${o.name}</option>`).join('')}
+          </select>
+        </div>
+        <div id="um-status" class="mt-2 text-sm text-muted"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('userModal').remove()">Cancelar</button>
+          <button class="btn btn-primary" id="um-btn" onclick="window._createUser()">Crear</button>
+        </div>
+      </div>
+    </div>`);
+};
+
+window._toggleOrgField = () => {
+  const role = document.getElementById('um-role').value;
+  document.getElementById('um-org-wrap').style.display = role === 'superadmin' ? 'none' : 'block';
+};
+
+window._createUser = async () => {
+  const name = document.getElementById('um-name').value.trim();
+  const email = document.getElementById('um-email').value.trim();
+  const pass = document.getElementById('um-pass').value;
+  const role = document.getElementById('um-role').value;
+  const orgId = document.getElementById('um-org')?.value || '';
+  const status = document.getElementById('um-status');
+
+  if (!name || !email || !pass) return alert('Completa todos los campos.');
+  if (pass.length < 6) return alert('La contraseña debe tener al menos 6 caracteres.');
+
+  document.getElementById('um-btn').disabled = true;
+  status.textContent = 'Creando cuenta...';
+
+  try {
+    // Create a secondary auth instance to avoid signing out current user
+    const { initializeApp: initApp2 } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth: getAuth2, createUserWithEmailAndPassword: createUser2 } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const app2 = initApp2(firebaseConfig, 'secondary-' + Date.now());
+    const auth2 = getAuth2(app2);
+    const cred = await createUser2(auth2, email, pass);
+    const uid = cred.user.uid;
+    await auth2.signOut();
+
+    await set(ref(db, `users/${uid}`), { name, email, role, orgId: orgId||null });
+    status.textContent = '✅ Usuario creado.';
+    setTimeout(() => { document.getElementById('userModal')?.remove(); window._nav('sa-users'); }, 1200);
+  } catch(e) {
+    status.textContent = '❌ Error: ' + (e.message || e.code);
+    document.getElementById('um-btn').disabled = false;
+  }
+};
+
+// ── ALL FORMS ─────────────────────────────────────────────────────
+async function renderSAForms(mc) {
+  const [formsSnap, orgsSnap, usersSnap] = await Promise.all([
+    get(ref(db, 'forms')),
+    get(ref(db, 'orgs')),
+    get(ref(db, 'users'))
+  ]);
+  const forms = formsSnap.val() || {};
+  const orgs = orgsSnap.val() || {};
+  const users = usersSnap.val() || {};
+
+  const rows = Object.entries(forms).map(([fid, f]) => {
+    const teacher = Object.values(users).find(u => u.uid === f.teacherUid || u.email === f.teacherEmail);
+    const org = orgs[f.orgId];
+    const slotCount = f.slots ? Object.keys(f.slots).length : 0;
+    const regCount = f.slots ? Object.values(f.slots).reduce((a,s)=>a+(Array.isArray(s)?s.length:0),0) : 0;
+    return `<tr>
+      <td class="bold">${f.title}</td>
+      <td>${org?.name||f.orgId||'—'}</td>
+      <td>${f.teacherName||teacher?.name||'—'}</td>
+      <td>${slotCount} franjas · ${regCount} registros</td>
+      <td><span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span></td>
+    </tr>`;
+  });
+
+  mc.innerHTML = `
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Todos los formularios</h2>
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <tr><th>Título</th><th>Organización</th><th>Profesor</th><th>Slots</th><th>Estado</th></tr>
+          ${rows.join('') || '<tr><td colspan="5" class="text-muted" style="text-align:center;padding:20px;">Sin formularios</td></tr>'}
+        </table>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ORG ADMIN
+// ══════════════════════════════════════════════════════════════════
+async function renderOrgAdmin() {
+  const orgSnap = await get(ref(db, `orgs/${currentUserData.orgId}`));
+  const org = orgSnap.val() || {};
+  const links = [
+    { id:'oa-forms', icon:'📋', label:'Formularios' },
+    { id:'oa-teachers', icon:'👩‍🏫', label:'Profesores' },
+  ];
+  document.getElementById('app').innerHTML = navHTML(links, org.logoUrl, org.name||'Admin');
+  window._nav('oa-forms');
+}
+
+async function renderAdminSection(id) {
+  activateNav(id);
+  const mc = document.getElementById('mainContent');
+  if (id === 'oa-forms') await renderAdminForms(mc);
+  else if (id === 'oa-teachers') await renderAdminTeachers(mc);
+}
+
+async function renderAdminForms(mc) {
+  const [formsSnap, usersSnap] = await Promise.all([
+    get(ref(db, 'forms')),
+    get(ref(db, 'users'))
+  ]);
+  const allForms = formsSnap.val() || {};
+  const orgForms = Object.entries(allForms).filter(([,f]) => f.orgId === currentUserData.orgId);
+  const users = usersSnap.val() || {};
+
+  mc.innerHTML = `<h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Formularios de la organización</h2>`;
+
+  if (!orgForms.length) {
+    mc.innerHTML += `<div class="card"><p class="text-muted">No hay formularios aún. Los profesores los crean desde su panel.</p></div>`;
+    return;
+  }
+
+  orgForms.forEach(([fid, f]) => {
+    const teacher = Object.values(users).find(u => u.email === f.teacherEmail);
+    const slots = f.slots || {};
+    const regCount = Object.values(slots).reduce((a,s)=>a+(Array.isArray(s)?s.length:0),0);
+    mc.innerHTML += `
+      <div class="card">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <div class="bold" style="font-size:1rem;">${f.title}</div>
+            <div class="text-sm text-muted">Profe: ${f.teacherName||teacher?.name||'—'} · ${regCount} registros</div>
+          </div>
+          <span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span>
+        </div>
+        ${renderSlotsReadOnly(f, fid, true)}
+      </div>`;
+  });
+}
+
+async function renderAdminTeachers(mc) {
+  const usersSnap = await get(ref(db, 'users'));
+  const users = usersSnap.val() || {};
+  const teachers = Object.entries(users).filter(([,u]) => u.orgId === currentUserData.orgId && u.role === 'teacher');
+
+  mc.innerHTML = `
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Profesores</h2>
+    <div class="card" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <tr><th>Nombre</th><th>Correo</th></tr>
+          ${teachers.map(([,u])=>`<tr><td class="bold">${u.name||'—'}</td><td>${u.email}</td></tr>`).join('')||'<tr><td colspan="2" class="text-muted" style="text-align:center;padding:20px;">Sin profesores</td></tr>'}
+        </table>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TEACHER
+// ══════════════════════════════════════════════════════════════════
+async function renderTeacher() {
+  const orgSnap = await get(ref(db, `orgs/${currentUserData.orgId}`));
+  const org = orgSnap.val() || {};
+  const links = [
+    { id:'t-forms', icon:'📋', label:'Mis formularios' },
+    { id:'t-new', icon:'➕', label:'Crear formulario' },
+  ];
+  document.getElementById('app').innerHTML = navHTML(links, org.logoUrl, org.name||'Profesor');
+  window._nav('t-forms');
+}
+
+async function renderTeacherSection(id) {
+  activateNav(id);
+  const mc = document.getElementById('mainContent');
+  if (id === 't-forms') await renderTeacherForms(mc);
+  else if (id === 't-new') renderTeacherNewForm(mc);
+}
+
+async function renderTeacherForms(mc) {
+  const formsSnap = await get(ref(db, 'forms'));
+  const all = formsSnap.val() || {};
+  const mine = Object.entries(all).filter(([,f]) => f.teacherUid === currentUser.uid);
+
+  mc.innerHTML = `
+    <div class="flex justify-between items-center mb-3">
+      <h2 style="font-size:1.1rem;font-weight:800;">Mis formularios</h2>
+      <button class="btn btn-primary btn-sm" onclick="window._nav('t-new')">+ Crear formulario</button>
+    </div>`;
+
+  if (!mine.length) {
+    mc.innerHTML += `<div class="card"><p class="text-muted">Aún no tienes formularios. Crea uno con el botón de arriba.</p></div>`;
+    return;
+  }
+
+  mine.forEach(([fid, f]) => {
+    const slots = f.slots || {};
+    const regCount = Object.values(slots).reduce((a,s)=>a+(Array.isArray(s)?s.length:0),0);
+    const slotCount = Object.keys(slots).length;
+    const formUrl = `${location.origin}${location.pathname}#form/${fid}`;
+
+    mc.innerHTML += `
+      <div class="card">
+        <div class="flex justify-between items-center flex-wrap gap-2 mb-2">
+          <div>
+            <div class="bold" style="font-size:1rem;">${f.title}</div>
+            <div class="text-sm text-muted">${slotCount} franjas · ${regCount} estudiantes registrados</div>
+          </div>
+          <div class="flex gap-2">
+            <span class="badge ${f.active?'badge-green':'badge-gray'}">${f.active?'Activo':'Cerrado'}</span>
+            <button class="btn btn-secondary btn-sm" onclick="window._toggleFormActive('${fid}',${f.active})">
+              ${f.active?'Cerrar':'Reabrir'}
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="window._deleteForm('${fid}')">Eliminar</button>
+          </div>
+        </div>
+        <div class="copy-link-box">
+          <span style="font-size:0.75rem;color:var(--muted);white-space:nowrap;">Link estudiantes:</span>
+          <input type="text" id="link-${fid}" value="${formUrl}" readonly onclick="this.select()">
+          <button class="btn btn-secondary btn-sm" onclick="window._copyLink('${fid}')">Copiar</button>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between items-center mb-2">
+            <span class="bold text-sm">Franjas y registros</span>
+            <button class="btn btn-secondary btn-sm" onclick="window._modalAddSlot('${fid}')">+ Añadir franja</button>
+          </div>
+          ${renderSlotsTeacher(f, fid)}
+        </div>
+      </div>`;
+  });
+}
+
+function renderSlotsTeacher(f, fid) {
+  const slots = f.slotsMeta || {};
+  const regs = f.slots || {};
+  if (!Object.keys(slots).length) return `<p class="text-sm text-muted">Sin franjas. Añade una.</p>`;
+
+  return `<div class="slot-list">${Object.entries(slots).map(([sid, s]) => {
+    const arr = regs[sid] || [];
+    const libre = s.max - arr.length;
+    let badge = libre <= 0 ? `<span class="badge badge-red">Lleno</span>`
+      : libre === 1 ? `<span class="badge badge-yellow">1 lugar</span>`
+      : `<span class="badge badge-green">${libre} lugares</span>`;
+
+    return `<div class="slot-card">
+      <div class="slot-head">
+        <span class="title">📅 ${s.label}</span>
+        <div class="flex gap-2 items-center">
+          ${badge}
+          <button class="btn btn-secondary btn-sm" onclick="window._exportSlot('${fid}','${sid}')">CSV</button>
+          <button class="btn btn-danger btn-sm" onclick="window._deleteSlot('${fid}','${sid}')">✕</button>
+        </div>
+      </div>
+      <div class="slot-body">
+        ${arr.length === 0
+          ? `<p class="slot-empty">Sin registros</p>`
+          : `<div class="table-wrap"><table>
+              <tr><th>#</th><th>Nombre</th><th>Apellido</th><th>ID</th><th>Correo</th><th></th></tr>
+              ${arr.map((e,i)=>`<tr>
+                <td>${i+1}</td>
+                <td>${e.nombre||''}</td>
+                <td>${e.apellido||''}</td>
+                <td>${e.id||''}</td>
+                <td>${e.correo||''}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="window._deleteReg('${fid}','${sid}',${i})">✕</button></td>
+              </tr>`).join('')}
+            </table></div>`
+        }
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderSlotsReadOnly(f, fid, showDelete) {
+  const slots = f.slotsMeta || {};
+  const regs = f.slots || {};
+  if (!Object.keys(slots).length) return `<p class="text-sm text-muted">Sin franjas.</p>`;
+
+  return `<div class="slot-list">${Object.entries(slots).map(([sid, s]) => {
+    const arr = regs[sid] || [];
+    const libre = s.max - arr.length;
+    let badge = libre <= 0 ? `<span class="badge badge-red">Lleno</span>`
+      : `<span class="badge badge-green">${arr.length}/${s.max}</span>`;
+
+    return `<div class="slot-card">
+      <div class="slot-head">
+        <span class="title">📅 ${s.label}</span>
+        <div class="flex gap-2">${badge}</div>
+      </div>
+      <div class="slot-body">
+        ${arr.length === 0
+          ? `<p class="slot-empty">Sin registros</p>`
+          : `<div class="table-wrap"><table>
+              <tr><th>#</th><th>Nombre</th><th>Apellido</th><th>ID</th><th>Correo</th></tr>
+              ${arr.map((e,i)=>`<tr><td>${i+1}</td><td>${e.nombre||''}</td><td>${e.apellido||''}</td><td>${e.id||''}</td><td>${e.correo||''}</td></tr>`).join('')}
+            </table></div>`
+        }
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── CREATE FORM ───────────────────────────────────────────────────
+function renderTeacherNewForm(mc) {
+  mc.innerHTML = `
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Crear formulario de horarios</h2>
+    <div class="card">
+      <div class="card-title">Información del formulario</div>
+      <label>Título del formulario</label>
+      <input type="text" id="nf-title" placeholder="Ej: Examen Oral B1.2 · Noviembre 2026">
+      <label>Descripción (opcional)</label>
+      <textarea id="nf-desc" placeholder="Instrucciones para los estudiantes..."></textarea>
+    </div>
+    <div class="card">
+      <div class="card-title">Franjas horarias</div>
+      <div class="alert alert-info">Agrega cada día y franja. Los estudiantes verán estas opciones al registrarse.</div>
+      <div id="nf-franjas"></div>
+      <button class="btn btn-secondary mt-3 btn-sm" onclick="window._addFranja()">+ Añadir franja</button>
+    </div>
+    <button class="btn btn-primary" onclick="window._saveNewForm()">Crear formulario y obtener link</button>
+    <div id="nf-status" class="mt-3"></div>`;
+
+  window._addFranja(); // start with one row
+}
+
+let franjaCounter = 0;
+window._addFranja = () => {
+  const id = `fr-${++franjaCounter}`;
+  const container = document.getElementById('nf-franjas');
+  const div = document.createElement('div');
+  div.id = id;
+  div.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;';
+  div.innerHTML = `
+    <div class="flex justify-between items-center mb-2">
+      <span class="bold text-sm">Franja ${franjaCounter}</span>
+      <button class="btn btn-danger btn-sm" onclick="document.getElementById('${id}').remove()">✕</button>
+    </div>
+    <div class="form-row">
+      <div>
+        <label>Fecha</label>
+        <input type="date" id="${id}-date">
+      </div>
+      <div>
+        <label>Etiqueta (Ej: Mar 2 jun)</label>
+        <input type="text" id="${id}-lbl" placeholder="Ej: Mar 18 nov">
+      </div>
+    </div>
+    <div class="form-row mt-2">
+      <div>
+        <label>Hora inicio</label>
+        <input type="time" id="${id}-start">
+      </div>
+      <div>
+        <label>Hora fin</label>
+        <input type="time" id="${id}-end">
+      </div>
+      <div>
+        <label>Cupos máx.</label>
+        <input type="number" id="${id}-max" value="3" min="1" max="50">
+      </div>
+    </div>`;
+  container.appendChild(div);
+
+  // Auto-fill label from date
+  document.getElementById(`${id}-date`).addEventListener('change', e => {
+    const d = new Date(e.target.value + 'T12:00:00');
+    const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const lbl = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+    const lblEl = document.getElementById(`${id}-lbl`);
+    if (!lblEl.value) lblEl.value = lbl;
+  });
+};
+
+window._saveNewForm = async () => {
+  const title = document.getElementById('nf-title').value.trim();
+  const desc = document.getElementById('nf-desc').value.trim();
+  const status = document.getElementById('nf-status');
+  if (!title) return alert('Escribe un título para el formulario.');
+
+  // Collect franjas
+  const rows = document.querySelectorAll('#nf-franjas > div[id^="fr-"]');
+  const slotsMeta = {};
+  for (const row of rows) {
+    const id = row.id;
+    const lbl = document.getElementById(`${id}-lbl`)?.value?.trim();
+    const start = document.getElementById(`${id}-start`)?.value;
+    const end = document.getElementById(`${id}-end`)?.value;
+    const max = parseInt(document.getElementById(`${id}-max`)?.value) || 3;
+    if (!lbl || !start) { alert(`Completa la franja "${lbl||id}".`); return; }
+    const sid = id;
+    slotsMeta[sid] = { label: `${lbl} · ${start}${end?' – '+end:''}`, max, lbl, start, end };
+  }
+  if (!Object.keys(slotsMeta).length) return alert('Agrega al menos una franja.');
+
+  const formRef = push(ref(db, 'forms'));
+  const fid = formRef.key;
+  await set(formRef, {
+    title, desc,
+    teacherUid: currentUser.uid,
+    teacherEmail: currentUser.email,
+    teacherName: currentUserData.name,
+    orgId: currentUserData.orgId,
+    active: true,
+    createdAt: Date.now(),
+    slotsMeta
+  });
+
+  const formUrl = `${location.origin}${location.pathname}#form/${fid}`;
+  status.innerHTML = `
+    <div class="alert alert-success">✅ Formulario creado. Comparte este link con tus estudiantes:</div>
+    <div class="copy-link-box">
+      <input type="text" id="new-link" value="${formUrl}" readonly onclick="this.select()">
+      <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('${formUrl}').then(()=>alert('¡Copiado!'))">Copiar</button>
+    </div>
+    <button class="btn btn-primary mt-3" onclick="window._nav('t-forms')">Ver mis formularios</button>`;
+};
+
+// ── SLOT MANAGEMENT ───────────────────────────────────────────────
+window._modalAddSlot = (fid) => {
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-overlay" id="slotModal">
+      <div class="modal">
+        <div class="modal-title">Añadir franja horaria</div>
+        <label>Etiqueta</label>
+        <input type="text" id="sm-lbl" placeholder="Ej: Lun 23 nov">
+        <div class="form-row">
+          <div><label>Hora inicio</label><input type="time" id="sm-start"></div>
+          <div><label>Hora fin</label><input type="time" id="sm-end"></div>
+          <div><label>Cupos</label><input type="number" id="sm-max" value="3" min="1"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('slotModal').remove()">Cancelar</button>
+          <button class="btn btn-primary" onclick="window._saveSlot('${fid}')">Añadir</button>
+        </div>
+      </div>
+    </div>`);
+};
+
+window._saveSlot = async (fid) => {
+  const lbl = document.getElementById('sm-lbl').value.trim();
+  const start = document.getElementById('sm-start').value;
+  const end = document.getElementById('sm-end').value;
+  const max = parseInt(document.getElementById('sm-max').value) || 3;
+  if (!lbl || !start) return alert('Completa la etiqueta y hora de inicio.');
+  const sid = `slot-${Date.now()}`;
+  await update(ref(db, `forms/${fid}/slotsMeta`), {
+    [sid]: { label: `${lbl} · ${start}${end?' – '+end:''}`, max, lbl, start, end }
+  });
+  document.getElementById('slotModal').remove();
+  window._nav('t-forms');
+};
+
+window._deleteSlot = async (fid, sid) => {
+  if (!confirm('¿Eliminar esta franja? Se eliminarán también los registros de estudiantes en ella.')) return;
+  await remove(ref(db, `forms/${fid}/slotsMeta/${sid}`));
+  await remove(ref(db, `forms/${fid}/slots/${sid}`));
+  window._nav('t-forms');
+};
+
+window._deleteReg = async (fid, sid, idx) => {
+  if (!confirm('¿Eliminar este registro?')) return;
+  const snap = await get(ref(db, `forms/${fid}/slots/${sid}`));
+  const arr = snap.val() || [];
+  arr.splice(idx, 1);
+  await set(ref(db, `forms/${fid}/slots/${sid}`), arr.length ? arr : null);
+  window._nav('t-forms');
+};
+
+window._toggleFormActive = async (fid, current) => {
+  await update(ref(db, `forms/${fid}`), { active: !current });
+  window._nav('t-forms');
+};
+
+window._deleteForm = async (fid) => {
+  if (!confirm('¿Eliminar este formulario y todos sus registros?')) return;
+  await remove(ref(db, `forms/${fid}`));
+  window._nav('t-forms');
+};
+
+// ── EXPORT ────────────────────────────────────────────────────────
+window._exportSlot = async (fid, sid) => {
+  const [slotSnap, formSnap] = await Promise.all([
+    get(ref(db, `forms/${fid}/slots/${sid}`)),
+    get(ref(db, `forms/${fid}/slotsMeta/${sid}`))
+  ]);
+  const arr = slotSnap.val() || [];
+  const meta = formSnap.val() || {};
+  const rows = [['Franja','Nombre','Apellido','ID','Correo'],
+    ...arr.map(e=>[meta.label||sid, e.nombre||'', e.apellido||'', e.id||'', e.correo||''])
+  ];
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})),
+    download: `${sid}.csv`
+  });
+  a.click();
+};
+
+window._copyLink = (fid) => {
+  const val = document.getElementById(`link-${fid}`)?.value;
+  if (val) navigator.clipboard.writeText(val).then(() => alert('¡Link copiado!'));
+};
+
+// ══════════════════════════════════════════════════════════════════
+// STUDENT FORM
+// ══════════════════════════════════════════════════════════════════
+async function renderStudentForm(fid) {
+  const formSnap = await get(ref(db, `forms/${fid}`));
+  const f = formSnap.val();
+
+  if (!f) {
+    document.getElementById('app').innerHTML = `<div style="text-align:center;padding:60px;"><h2>Formulario no encontrado</h2><p class="text-muted">El link puede estar incorrecto o el formulario fue eliminado.</p></div>`;
+    return;
+  }
+
+  if (!f.active) {
+    document.getElementById('app').innerHTML = `<div style="text-align:center;padding:60px;"><h2>Formulario cerrado</h2><p class="text-muted">El período de registro ya cerró.</p></div>`;
+    return;
+  }
+
+  // Load org logo
+  const orgSnap = await get(ref(db, `orgs/${f.orgId}`));
+  const org = orgSnap.val() || {};
+
+  const logoHtml = org.logoUrl ? `<img src="${org.logoUrl}" alt="${org.name}" style="height:60px;object-fit:contain;">` : `<span style="color:#fff;font-weight:800;font-size:1.1rem;">${org.name||'TestSchedule'}</span>`;
+
+  document.getElementById('app').innerHTML = `
+    <div id="studentPage">
+      <div class="student-header">
+        ${logoHtml}
+        <div class="info">
+          <h1>${f.title}</h1>
+          <p>${f.desc||'Selecciona tu franja horaria para el examen oral'}</p>
+        </div>
+      </div>
+      <div class="student-body">
+        <div id="sf-form">
+          <div class="card">
+            <div class="card-title">📋 Tus datos</div>
+            <div class="form-row">
+              <div><label>Nombre</label><input type="text" id="sf-nombre" placeholder="Tu nombre"></div>
+              <div><label>Apellido</label><input type="text" id="sf-apellido" placeholder="Tu apellido"></div>
+            </div>
+            <div class="form-row">
+              <div><label>Número de ID</label><input type="number" id="sf-id" placeholder="Ej: 1234567890"></div>
+              <div><label>Correo electrónico</label><input type="email" id="sf-correo" placeholder="tu@correo.com"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📅 Escoge tu franja</div>
+            <div id="sf-slots" class="franja-pick-grid"></div>
+          </div>
+          <div id="sf-err" class="alert alert-warn hidden">⚠️ Completa todos tus datos y selecciona una franja.</div>
+          <button class="btn btn-primary btn-block mt-3" id="sf-btn" onclick="window._submitForm('${fid}')">Confirmar registro</button>
+        </div>
+        <div id="sf-confirm" class="hidden">
+          <div class="confirm-wrap">
+            <div class="confirm-icon">✅</div>
+            <h2>¡Registro exitoso!</h2>
+            <p>Este es tu horario de examen oral:</p>
+            <div class="confirm-box" id="sf-confirm-detail"></div>
+            <p>Gracias por tu registro. <strong>Espera la citación oficial en tu correo en los próximos días.</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  // Load slots live
+  let selectedSlot = null;
+  onValue(ref(db, `forms/${fid}/slots`), (snap) => {
+    const regsData = snap.val() || {};
+    renderStudentSlots(f.slotsMeta||{}, regsData, selectedSlot, (sid) => {
+      selectedSlot = sid;
+      renderStudentSlots(f.slotsMeta||{}, regsData, selectedSlot, null);
+    });
+  });
+
+  window._submitForm = async (fid) => {
+    const nombre = document.getElementById('sf-nombre').value.trim();
+    const apellido = document.getElementById('sf-apellido').value.trim();
+    const id = document.getElementById('sf-id').value.trim();
+    const correo = document.getElementById('sf-correo').value.trim();
+    const err = document.getElementById('sf-err');
+
+    if (!nombre || !apellido || !id || !correo || !selectedSlot) {
+      err.classList.remove('hidden'); return;
+    }
+    err.classList.add('hidden');
+    const btn = document.getElementById('sf-btn');
+    btn.disabled = true; btn.textContent = 'Registrando...';
+
+    const { runTransaction } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+    const slotRef = ref(db, `forms/${fid}/slots/${selectedSlot}`);
+    const metaSnap = await get(ref(db, `forms/${fid}/slotsMeta/${selectedSlot}`));
+    const meta = metaSnap.val() || {};
+
+    try {
+      const result = await runTransaction(slotRef, (current) => {
+        const arr = current || [];
+        if (arr.length >= meta.max) return; // abort
+        return [...arr, { nombre, apellido, id, correo, ts: Date.now() }];
+      });
+
+      if (result.committed) {
+        document.getElementById('sf-form').classList.add('hidden');
+        document.getElementById('sf-confirm').classList.remove('hidden');
+        document.getElementById('sf-confirm-detail').innerHTML = `
+          <p><strong>Nombre:</strong> ${nombre} ${apellido}</p>
+          <p><strong>ID:</strong> ${id}</p>
+          <p><strong>Correo:</strong> ${correo}</p>
+          <p><strong>Horario:</strong> ${meta.label||selectedSlot}</p>`;
+      } else {
+        alert('Este horario se llenó mientras registrabas. Escoge otro.');
+        btn.disabled = false; btn.textContent = 'Confirmar registro';
+      }
+    } catch(e) {
+      alert('Error al guardar. Intenta de nuevo.');
+      btn.disabled = false; btn.textContent = 'Confirmar registro';
+    }
+  };
+}
+
+function renderStudentSlots(slotsMeta, regsData, selectedSlot, onSelect) {
+  const grid = document.getElementById('sf-slots');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(slotsMeta).map(([sid, s]) => {
+    const arr = regsData[sid] || [];
+    const libre = s.max - arr.length;
+    const full = libre <= 0;
+    const isSelected = selectedSlot === sid;
+    const badgeText = full ? 'Lleno' : libre === 1 ? '1 lugar' : `${libre} lugares`;
+    const badgeCls = full ? 'badge-red' : libre === 1 ? 'badge-yellow' : 'badge-green';
+    return `<button class="franja-pick-btn ${full?'fp-full':''} ${isSelected?'fp-selected':''}"
+      ${full?'disabled':''} onclick="window._selectSlot('${sid}')">
+      <span>${s.label}</span>
+      <span class="badge ${badgeCls}">${badgeText}</span>
+    </button>`;
+  }).join('');
+
+  if (onSelect) {
+    window._selectSlot = (sid) => onSelect(sid);
+  }
+}
+
+</script>
+</body>
+</html>
