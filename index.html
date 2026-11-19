@@ -35,7 +35,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 /* NAV */
 .topnav{background:var(--brand);color:#fff;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
 .topnav-logo{display:flex;align-items:center;gap:12px;}
-.topnav-logo img{height:36px;object-fit:contain;}
+.topnav-logo img{height:36px;object-fit:contain;background:#fff;border-radius:5px;padding:3px 8px;}
 .topnav-logo span{font-weight:700;font-size:1rem;letter-spacing:.5px;}
 .topnav-right{display:flex;align-items:center;gap:16px;}
 .topnav-right .user-pill{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 14px;font-size:.8rem;}
@@ -359,7 +359,7 @@ function navHTML(links, orgLogo, orgName) {
     </div>
     <div class="shell">
       <nav class="sidebar">
-        ${links.map(l => `<a href="#" onclick="window._nav('${l.id}');return false;" id="nav-${l.id}">${l.icon} ${l.label}</a>`).join('')}
+        ${links.map(l => `<a href="#" onclick="event.preventDefault();window._nav('${l.id}');" id="nav-${l.id}">${l.icon} ${l.label}</a>`).join('')}
       </nav>
       <div class="main" id="mainContent"></div>
     </div>`;
