@@ -366,14 +366,23 @@ function navHTML(links, orgLogo, orgName) {
 }
 
 window._logout = () => signOut(auth);
-window._nav = (id) => {
+window._nav = async (id, pushState=true) => {
   document.querySelectorAll('.sidebar a, .sidebar button.nav-btn').forEach(a => a.classList.remove('active'));
   const el = document.getElementById('nav-' + id);
   if (el) el.classList.add('active');
-  if (currentUserData.role === 'superadmin') renderSASection(id);
-  else if (currentUserData.role === 'admin') renderAdminSection(id);
-  else if (currentUserData.role === 'teacher') renderTeacherSection(id);
+  if (pushState) history.pushState({navId:id}, '', '#'+id);
+  const mc = document.getElementById('mainContent');
+  if (!mc) return;
+  mc.innerHTML = `<div style="padding:40px;text-align:center;color:#9ca3af;">Cargando...</div>`;
+  try {
+    if (currentUserData.role === 'superadmin') await renderSASection(id);
+    else if (currentUserData.role === 'admin') await renderAdminSection(id);
+    else if (currentUserData.role === 'teacher') await renderTeacherSection(id);
+  } catch(e) { mc.innerHTML=`<div class="card"><p class="text-muted">Error al cargar: ${e.message}</p></div>`; console.error(e); }
 };
+window.addEventListener('popstate', e => {
+  if (e.state?.navId) window._nav(e.state.navId, false);
+});
 function activateNav(id) {
   document.querySelectorAll('.sidebar a, .sidebar button.nav-btn').forEach(a => a.classList.remove('active'));
   const el = document.getElementById('nav-' + id);
@@ -403,7 +412,6 @@ function renderSuperAdmin() {
 }
 
 async function renderSASection(id) {
-  activateNav(id);
   const mc = document.getElementById('mainContent');
   if (id==='sa-orgs')  await renderSAOrgs(mc);
   else if (id==='sa-users') await renderSAUsers(mc);
@@ -607,7 +615,7 @@ async function renderOrgAdmin(){
 }
 
 async function renderAdminSection(id){
-  activateNav(id); const mc=document.getElementById('mainContent');
+  const mc=document.getElementById('mainContent');
   if (id==='oa-forms') await renderAdminForms(mc);
   else if (id==='oa-teachers') await renderAdminTeachers(mc);
   else if (id==='oa-settings') await renderAdminSettings(mc);
@@ -817,7 +825,7 @@ async function renderTeacher(){
 }
 
 async function renderTeacherSection(id){
-  activateNav(id); const mc=document.getElementById('mainContent');
+  const mc=document.getElementById('mainContent');
   if (id==='t-forms') await renderTeacherForms(mc);
   else if (id==='t-new') renderTeacherNewForm(mc);
   else if (id==='t-detail') { /* handled inline */ }
