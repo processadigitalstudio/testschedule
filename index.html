@@ -599,6 +599,7 @@ async function renderOrgAdmin(){
     {id:'oa-forms',icon:'📋',label:'Formularios'},
     {id:'oa-teachers',icon:'👩‍🏫',label:'Profesores'},
     {id:'oa-settings',icon:'⚙️',label:'Configuración'},
+    {id:'oa-account',icon:'👤',label:'Mi cuenta'},
   ];
   document.getElementById('app').innerHTML=navHTML(links,org.logoUrl,org.name||'Admin');
   window._nav('oa-forms');
@@ -609,6 +610,7 @@ async function renderAdminSection(id){
   if (id==='oa-forms') await renderAdminForms(mc);
   else if (id==='oa-teachers') await renderAdminTeachers(mc);
   else if (id==='oa-settings') await renderAdminSettings(mc);
+  else if (id==='oa-account') await renderAdminAccount(mc);
 }
 
 async function renderAdminForms(mc){
@@ -636,12 +638,85 @@ async function renderAdminTeachers(mc){
   const uSnap=await get(ref(db,'users')); const users=uSnap.val()||{};
   const teachers=Object.entries(users).filter(([,u])=>u.orgId===currentUserData.orgId&&u.role==='teacher');
   mc.innerHTML=`
-    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Profesores</h2>
+    <div class="flex justify-between items-center mb-3">
+      <h2 style="font-size:1.1rem;font-weight:800;">Profesores</h2>
+      <button class="btn btn-primary btn-sm" onclick="window._modalNewTeacher()">+ Nuevo profesor</button>
+    </div>
     <div class="card" style="padding:0;"><div class="table-wrap"><table>
-      <tr><th>Nombre</th><th>Correo</th></tr>
-      ${teachers.map(([,u])=>`<tr><td class="bold">${u.name||'—'}</td><td>${u.email}</td></tr>`).join('')||'<tr><td colspan="2" class="text-muted" style="text-align:center;padding:20px;">Sin profesores</td></tr>'}
+      <tr><th>Nombre</th><th>Correo</th><th>Acciones</th></tr>
+      ${teachers.map(([uid,u])=>`<tr>
+        <td class="bold">${u.name||'—'}</td>
+        <td>${u.email}</td>
+        <td>
+          <button class="btn btn-secondary btn-sm" onclick="window._modalEditTeacher('${uid}')">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="window._deleteTeacher('${uid}')">Eliminar</button>
+        </td>
+      </tr>`).join('')||'<tr><td colspan="3" class="text-muted" style="text-align:center;padding:20px;">Sin profesores aún</td></tr>'}
     </table></div></div>`;
 }
+
+window._modalNewTeacher = () => showTeacherModal(null, null);
+window._modalEditTeacher = async (uid) => {
+  const snap = await get(ref(db,`users/${uid}`));
+  showTeacherModal(uid, snap.val());
+};
+
+function showTeacherModal(uid, data) {
+  const isEdit = !!uid;
+  document.body.insertAdjacentHTML('beforeend',`
+    <div class="modal-overlay" id="teacherModal"><div class="modal">
+      <div class="modal-title">${isEdit?'Editar':'Nuevo'} profesor</div>
+      <div class="form-row">
+        <div><label>Nombre completo</label><input type="text" id="tm-name" value="${data?.name||''}"></div>
+        <div><label>Correo electrónico</label><input type="email" id="tm-email" value="${data?.email||''}" ${isEdit?'readonly style="background:#f3f4f6;"':''}></div>
+      </div>
+      ${!isEdit?`<label>Contraseña temporal</label>
+      <input type="text" id="tm-pass" placeholder="Mínimo 6 caracteres">
+      <div class="alert alert-info mt-2" style="font-size:.8rem;">El profesor podrá cambiar su contraseña desde su perfil al entrar.</div>`:''}
+      <div id="tm-status" class="mt-2 text-sm text-muted"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('teacherModal').remove()">Cancelar</button>
+        <button class="btn btn-primary" id="tm-btn" onclick="window._saveTeacher('${uid||''}')">Guardar</button>
+      </div>
+    </div></div>`);
+}
+
+window._saveTeacher = async (uid) => {
+  const name  = document.getElementById('tm-name').value.trim();
+  const email = document.getElementById('tm-email').value.trim();
+  const status= document.getElementById('tm-status');
+  document.getElementById('tm-btn').disabled = true;
+  if (!name||!email){ alert('Completa nombre y correo.'); document.getElementById('tm-btn').disabled=false; return; }
+
+  if (uid) {
+    // Edit — just update name in DB (email can't change via admin for Firebase Auth without Admin SDK)
+    await update(ref(db,`users/${uid}`), { name });
+    document.getElementById('teacherModal').remove();
+    toast('Profesor actualizado');
+    window._nav('oa-teachers');
+  } else {
+    const pass = document.getElementById('tm-pass').value;
+    if (pass.length<6){ alert('Contraseña mínimo 6 caracteres.'); document.getElementById('tm-btn').disabled=false; return; }
+    status.textContent = 'Creando cuenta...';
+    try {
+      const {initializeApp:ia} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+      const {getAuth:ga,createUserWithEmailAndPassword:cu} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+      const a2 = ia(firebaseConfig,'tch-'+Date.now()); const auth2 = ga(a2);
+      const cred = await cu(auth2, email, pass); const newUid = cred.user.uid;
+      await auth2.signOut();
+      await set(ref(db,`users/${newUid}`), { name, email, role:'teacher', orgId: currentUserData.orgId });
+      status.textContent = '✅ Profesor creado.';
+      setTimeout(()=>{ document.getElementById('teacherModal')?.remove(); window._nav('oa-teachers'); }, 1200);
+    } catch(e){ status.textContent='❌ '+e.message; document.getElementById('tm-btn').disabled=false; }
+  }
+};
+
+window._deleteTeacher = async (uid) => {
+  if (!confirm('¿Eliminar este profesor? No afecta sus clases ya creadas.')) return;
+  await remove(ref(db,`users/${uid}`));
+  toast('Profesor eliminado');
+  window._nav('oa-teachers');
+};
 
 async function renderAdminSettings(mc){
   const orgSnap=await get(ref(db,`orgs/${currentUserData.orgId}`));
@@ -666,6 +741,64 @@ window._saveOrgSettings = async () => {
   const body=document.getElementById('as-body').value.trim();
   await update(ref(db,`orgs/${currentUserData.orgId}`),{emailSubject:subj,emailTemplate:body});
   toast('Configuración guardada');
+};
+
+async function renderAdminAccount(mc){
+  mc.innerHTML=`
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Mi cuenta</h2>
+
+    <div class="card">
+      <div class="card-title">Datos personales</div>
+      <label>Nombre</label>
+      <input type="text" id="ac-name" value="${currentUserData.name||''}">
+      <label>Correo electrónico</label>
+      <input type="email" id="ac-email" value="${currentUser.email||''}" readonly style="background:#f3f4f6;">
+      <p class="text-sm text-muted mt-1">Para cambiar el correo, contacta al SuperAdmin.</p>
+      <div class="mt-3">
+        <button class="btn btn-primary" onclick="window._saveAccountName()">Guardar nombre</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Cambiar contraseña</div>
+      <label>Nueva contraseña</label>
+      <input type="password" id="ac-pass1" placeholder="Mínimo 6 caracteres">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="ac-pass2" placeholder="Repite la contraseña">
+      <div id="ac-pass-status" class="mt-2 text-sm"></div>
+      <div class="mt-3">
+        <button class="btn btn-primary" onclick="window._saveAccountPassword()">Cambiar contraseña</button>
+      </div>
+    </div>`;
+}
+
+window._saveAccountName = async () => {
+  const name = document.getElementById('ac-name').value.trim();
+  if (!name){ alert('Escribe tu nombre.'); return; }
+  await update(ref(db,`users/${currentUser.uid}`), { name });
+  currentUserData.name = name;
+  toast('Nombre actualizado');
+};
+
+window._saveAccountPassword = async () => {
+  const p1 = document.getElementById('ac-pass1').value;
+  const p2 = document.getElementById('ac-pass2').value;
+  const st = document.getElementById('ac-pass-status');
+  if (p1.length < 6){ st.innerHTML='<span class="text-danger">Mínimo 6 caracteres.</span>'; return; }
+  if (p1 !== p2){ st.innerHTML='<span class="text-danger">Las contraseñas no coinciden.</span>'; return; }
+  try {
+    const { updatePassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await updatePassword(currentUser, p1);
+    st.innerHTML='<span style="color:var(--success)">✅ Contraseña actualizada.</span>';
+    document.getElementById('ac-pass1').value='';
+    document.getElementById('ac-pass2').value='';
+  } catch(e){
+    if (e.code==='auth/requires-recent-login'){
+      st.innerHTML='<span class="text-danger">Por seguridad, cierra sesión, vuelve a entrar y cambia la contraseña.</span>';
+    } else {
+      st.innerHTML='<span class="text-danger">❌ '+e.message+'</span>';
+    }
+  }
 };
 
 // ══════════════════════════════════════════════════════════════════
