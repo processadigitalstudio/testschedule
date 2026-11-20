@@ -16,8 +16,8 @@
 <style>
 :root {
   --brand: #2D3E50;
-  --accent: #1DB8A8;
-  --accent2: #17a094;
+  --accent: #3B4A2A;
+  --accent2: #2e3a20;
   --bg: #f0f4f8;
   --card: #ffffff;
   --text: #2D3E50;
@@ -93,7 +93,7 @@ textarea{resize:vertical;min-height:60px;}
 .badge-green{background:#d1fae5;color:#065f46;}
 .badge-yellow{background:#fef3c7;color:#92400e;}
 .badge-red{background:#fee2e2;color:#991b1b;}
-.badge-blue{background:#dbeafe;color:#1e40af;}
+.badge-blue{background:#e8ecdf;color:#3B4A2A;}
 .badge-gray{background:#f3f4f6;color:#374151;}
 .badge-purple{background:#ede9fe;color:#5b21b6;}
 
@@ -128,16 +128,16 @@ tr:hover td{background:#fafbfc;}
 
 /* STUDENT PAGE */
 #studentPage{min-height:100vh;}
-.student-header{background:var(--brand);padding:20px 24px;display:flex;align-items:center;gap:16px;}
-.student-header img{height:60px;object-fit:contain;}
-.student-header .info{color:#fff;}
+.student-header{background:#fff;border-bottom:3px solid var(--accent);padding:20px 24px;display:flex;align-items:center;gap:16px;}
+.student-header img{height:60px;object-fit:contain;background:#fff;}
+.student-header .info{color:var(--brand);}
 .student-header .info h1{font-size:1.1rem;font-weight:700;}
 .student-header .info p{font-size:.82rem;color:var(--accent);margin-top:2px;}
 .student-body{max-width:680px;margin:28px auto;padding:0 16px;}
 .franja-pick-grid{display:flex;flex-direction:column;gap:10px;}
 .franja-pick-btn{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border:2px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:.92rem;color:var(--text);transition:all .15s;width:100%;text-align:left;}
-.franja-pick-btn:hover:not(.fp-full){border-color:var(--accent);background:#f0faf9;}
-.franja-pick-btn.fp-selected{border-color:var(--accent);background:#e0f7f5;}
+.franja-pick-btn:hover:not(.fp-full){border-color:var(--accent);background:#f3f5f0;}
+.franja-pick-btn.fp-selected{border-color:var(--accent);background:#e8ecdf;}
 .franja-pick-btn.fp-full{opacity:.5;cursor:not-allowed;background:#f9fafb;}
 .confirm-wrap{text-align:center;padding:40px 20px;}
 .confirm-icon{font-size:3rem;margin-bottom:12px;}
@@ -152,7 +152,7 @@ tr:hover td{background:#fafbfc;}
 
 /* ALERTS */
 .alert{padding:10px 14px;border-radius:7px;font-size:.86rem;margin-bottom:14px;}
-.alert-info{background:#dbeafe;color:#1e40af;}
+.alert-info{background:#e8ecdf;color:#3B4A2A;}
 .alert-success{background:#d1fae5;color:#065f46;}
 .alert-warn{background:#fef3c7;color:#92400e;}
 .alert-danger{background:#fee2e2;color:#991b1b;}
@@ -1837,9 +1837,9 @@ async function renderStudentForm(fid){
             <h2>¡Inscripción confirmada!</h2>
             <p class="text-muted mt-2" style="font-size:.95rem;">Hemos registrado tu cita de examen oral.</p>
             <div class="confirm-box" id="sf-confirm-detail"></div>
-            <div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:10px;text-align:left;">
-              <p style="margin:0 0 4px 0;font-weight:700;color:#1d4ed8;font-size:.88rem;">📬 ¿Y ahora qué?</p>
-              <p style="margin:0;font-size:.85rem;color:#1e40af;line-height:1.5;">En los próximos días recibirás en tu correo la <strong>citación oficial</strong> con el enlace de <strong>Google Meet</strong> para conectarte el día del examen.</p>
+            <div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#f3f5f0,#e8ecdf);border:1px solid #c5ceaf;border-radius:10px;text-align:left;">
+              <p style="margin:0 0 4px 0;font-weight:700;color:#3B4A2A;font-size:.88rem;">📬 ¿Y ahora qué?</p>
+              <p style="margin:0;font-size:.85rem;color:#2e3a20;line-height:1.5;">En los próximos días recibirás en tu correo la <strong>citación oficial</strong> con el enlace de <strong>Google Meet</strong> para conectarte el día del examen.</p>
             </div>
           </div>
         </div>
