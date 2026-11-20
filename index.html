@@ -1897,17 +1897,27 @@ async function renderStudentForm(fid){
     </div>`;
 
   let selectedSlot=null;
-  onValue(ref(db,`forms/${fid}/registrations`),(snap)=>{
-    const regsData=snap.val()||{};
-    // Count per slot
-    const countBySlot={};
-    Object.values(regsData).forEach(r=>{
-      countBySlot[r.slotId]=(countBySlot[r.slotId]||0)+1;
+
+  // Listen to BOTH paths and merge counts
+  let countFromForms={};
+  let countFromRoot={};
+  function _rebuildSlotCounts(){
+    const merged={};
+    [...Object.values(countFromForms),...Object.values(countFromRoot)].forEach(r=>{
+      if(r.slotId) merged[r.slotId]=(merged[r.slotId]||0)+1;
     });
-    renderStudentSlots(f.slotsMeta||{},countBySlot,selectedSlot,(sid)=>{
+    renderStudentSlots(f.slotsMeta||{},merged,selectedSlot,(sid)=>{
       selectedSlot=sid;
-      renderStudentSlots(f.slotsMeta||{},countBySlot,selectedSlot,null);
+      renderStudentSlots(f.slotsMeta||{},merged,selectedSlot,null);
     });
+  }
+  onValue(ref(db,`forms/${fid}/registrations`),(snap)=>{
+    countFromForms=snap.val()||{};
+    _rebuildSlotCounts();
+  });
+  onValue(ref(db,`registrations/${fid}`),(snap)=>{
+    countFromRoot=snap.val()||{};
+    _rebuildSlotCounts();
   });
 
   window._submitStudentForm=async(fid)=>{
@@ -1924,13 +1934,16 @@ async function renderStudentForm(fid){
     const btn=document.getElementById('sf-btn');
     btn.disabled=true; btn.textContent='Registrando...';
 
-    // Check if slot is still available
-    const fSnap2=await get(ref(db,`forms/${fid}`));
+    // Check if slot is still available — read BOTH paths to get real count
+    const [fSnap2,rootRegSnap2]=await Promise.all([
+      get(ref(db,`forms/${fid}`)),
+      get(ref(db,`registrations/${fid}`))
+    ]);
     const f2=fSnap2.val(); if (!f2){btn.disabled=false;btn.textContent='Confirmar inscripción';return;}
-    const regs=f2.registrations||{};
+    const allRegs2={...(f2.registrations||{}),...(rootRegSnap2.val()||{})};
     const slotMeta=f2.slotsMeta?.[selectedSlot];
     if (!slotMeta){alert('Franja no encontrada.');btn.disabled=false;return;}
-    const countInSlot=Object.values(regs).filter(r=>r.slotId===selectedSlot).length;
+    const countInSlot=Object.values(allRegs2).filter(r=>r.slotId===selectedSlot).length;
     if (countInSlot>=slotMeta.max){
       alert('Este horario ya se llenó mientras registrabas. Escoge otro.');
       btn.disabled=false; btn.textContent='Confirmar inscripción'; return;
