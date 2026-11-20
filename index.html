@@ -289,9 +289,9 @@ async function createCalendarEventWithMeet(token, {title, start, end, teacherEma
 // ── ROUTER ──────────────────────────────────────────────────────────
 let currentUser = null;
 let currentUserData = null;
-const hash = location.hash;
 
 onAuthStateChanged(auth, async user => {
+  const hash = location.hash;
   if (user) {
     currentUser = user;
     // If it's a public form link, show it directly even if logged in
