@@ -1378,28 +1378,33 @@ window._recalcSlots = () => {
     }
   }
 
-  // 2. Manual slots — read current values from each franja-builder
+  // 2. Manual slots — subdivide each franja just like auto-generator
   document.querySelectorAll('#nf-franjas > div[id^="fr-"]').forEach(row => {
     const id = row.id;
     const dv = document.getElementById(`${id}-date`)?.value;
     const sv = document.getElementById(`${id}-start`)?.value;
     const ev = document.getElementById(`${id}-end`)?.value;
     const mx = parseInt(document.getElementById(`${id}-max`)?.value)||2;
-    const lbl= document.getElementById(`${id}-lbl`)?.value?.trim();
-    if (!dv && !sv) return; // skip empty rows
-    let label = lbl;
-    if (!label && dv && sv) {
-      const d = new Date(dv+'T12:00:00');
-      label = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} · ${sv}${ev?' – '+ev:''}`;
+    const durM = parseInt(document.getElementById(`${id}-dur`)?.value)||90;
+    if (!dv || !sv || !ev) return; // skip incomplete rows
+    const [sh2,sm2] = sv.split(':').map(Number);
+    const [eh2,em2] = ev.split(':').map(Number);
+    const totalMin2 = (eh2*60+em2) - (sh2*60+sm2);
+    if (totalMin2 <= 0) return;
+    const slotCount2 = Math.floor(totalMin2 / durM);
+    const d2 = new Date(dv+'T12:00:00');
+    const dayStr2 = `${days[d2.getDay()]} ${d2.getDate()} ${months[d2.getMonth()]}`;
+    for (let i=0; i<slotCount2; i++){
+      const sMin = sh2*60+sm2 + i*durM;
+      const eMin = sMin + durM;
+      slotsHtml += `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid var(--border);background:#fffbf0;">
+        <span>📅</span>
+        <span class="text-sm bold">${dayStr2} · ${fmt(sMin)} – ${fmt(eMin)}</span>
+        <span class="badge" style="background:#f59e0b;color:#fff;">${mx} cupo${mx>1?'s':''}</span>
+        <span class="text-sm text-muted" style="font-size:.74rem;">(manual)</span>
+      </div>`;
+      totalSlots++; totalCupos += mx;
     }
-    if (!label) label = 'Franja manual';
-    slotsHtml += `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid var(--border);background:#fffbf0;">
-      <span>📅</span>
-      <span class="text-sm bold">${label}</span>
-      <span class="badge" style="background:#f59e0b;color:#fff;">${mx} cupo${mx>1?'s':''}</span>
-      <span class="text-sm text-muted" style="font-size:.74rem;">(manual)</span>
-    </div>`;
-    totalSlots++; totalCupos += mx;
   });
 
   if (!totalSlots && !startVal) { preview.innerHTML=''; return; }
@@ -1454,18 +1459,24 @@ window._addFranjaManual = () => {
     const dv=document.getElementById(`${id}-date`).value;
     const sv=document.getElementById(`${id}-start`).value;
     const ev=document.getElementById(`${id}-end`).value;
+    const durV=parseInt(document.getElementById(`${id}-dur`).value)||90;
     const lv=document.getElementById(`${id}-lbl`);
-    if (!dv||!sv) return;
+    if (!dv||!sv||!ev) return;
     const d=new Date(dv+'T12:00:00');
     const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    lv.value=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} · ${sv}${ev?' – '+ev:''}`;
+    const [sh,sm]=sv.split(':').map(Number);
+    const [eh,em]=ev.split(':').map(Number);
+    const totalMin=(eh*60+em)-(sh*60+sm);
+    const count=totalMin>0?Math.floor(totalMin/durV):0;
+    lv.value=`${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} · ${sv} – ${ev} → ${count} franja${count!==1?'s':''}`;
   };
   const refresh = () => { autoLabel(); window._recalcSlots(); };
   document.getElementById(`${id}-date`).addEventListener('change',refresh);
   document.getElementById(`${id}-start`).addEventListener('change',refresh);
   document.getElementById(`${id}-end`).addEventListener('change',refresh);
   document.getElementById(`${id}-max`).addEventListener('input', window._recalcSlots);
+  document.getElementById(`${id}-dur`).addEventListener('change', refresh);
   // Also update preview when this franja is removed
   div.querySelector('.btn-danger').addEventListener('click', ()=>setTimeout(window._recalcSlots,50));
 };
@@ -1511,19 +1522,34 @@ window._saveNewForm = async () => {
     }
   }
 
-  // 2. Manual slots
+  // 2. Manual slots — subdivide by duration, same logic as auto-generator
   const rows=document.querySelectorAll('#nf-franjas > div[id^="fr-"]');
   for (const row of rows){
     const id=row.id;
-    const lbl=document.getElementById(`${id}-lbl`)?.value?.trim();
     const start=document.getElementById(`${id}-start`)?.value;
     const end=document.getElementById(`${id}-end`)?.value;
     const durM=parseInt(document.getElementById(`${id}-dur`)?.value)||90;
     const max=parseInt(document.getElementById(`${id}-max`)?.value)||2;
     const date=document.getElementById(`${id}-date`)?.value;
-    if (!lbl||!start||!date){ alert(`Completa fecha y hora de inicio en la franja manual ${id}.`); return; }
-    const sid='slot-'+Date.now()+'-m-'+Math.random().toString(36).substr(2,4);
-    slotsMeta[sid]={label:lbl,max,start,end:end||'',date,dur:durM};
+    if (!start||!date){ alert(`Completa fecha y hora de inicio en la franja manual.`); return; }
+    if (!end){ alert(`Completa hora de fin en la franja manual.`); return; }
+    const [sh2,sm2]=start.split(':').map(Number);
+    const [eh2,em2]=end.split(':').map(Number);
+    const totalMin2=(eh2*60+em2)-(sh2*60+sm2);
+    if(totalMin2<=0){ alert(`La hora de fin debe ser mayor que la de inicio en la franja manual.`); return; }
+    const slotCount2=Math.floor(totalMin2/durM);
+    if(slotCount2===0){ alert(`El rango horario es muy corto para la duración seleccionada (${durM} min).`); return; }
+    const fmtM=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+    const d2=new Date(date+'T12:00:00');
+    const days2=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const months2=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const dayStr2=`${days2[d2.getDay()]} ${d2.getDate()} ${months2[d2.getMonth()]}`;
+    for(let i=0;i<slotCount2;i++){
+      const sMin=sh2*60+sm2+i*durM;
+      const eMin=sMin+durM;
+      const sid='slot-'+Date.now()+'-m'+i+'-'+Math.random().toString(36).substr(2,4);
+      slotsMeta[sid]={label:`${dayStr2} · ${fmtM(sMin)} – ${fmtM(eMin)}`,max,start:fmtM(sMin),end:fmtM(eMin),date,dur:durM};
+    }
   }
 
   if (!Object.keys(slotsMeta).length) return alert('Configura el generador de franjas o añade una franja manual.');
