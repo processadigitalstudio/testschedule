@@ -953,13 +953,15 @@ window._openClassDetail = async (fid) => {
   const mc=document.getElementById('mainContent');
   mc.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);">Cargando...</div>`;
 
-  const [fSnap,orgSnap]=await Promise.all([
+  const [fSnap,orgSnap,rootRegSnap]=await Promise.all([
     get(ref(db,`forms/${fid}`)),
-    get(ref(db,`orgs/${currentUserData.orgId}`))
+    get(ref(db,`orgs/${currentUserData.orgId}`)),
+    get(ref(db,`registrations/${fid}`))
   ]);
   const f=fSnap.val(); if (!f){mc.innerHTML='<p>No encontrado</p>';return;}
   const org=orgSnap.val()||{};
-  const regs=f.registrations||{};
+  // Merge registrations from both paths (legacy nested + new root path)
+  const regs={...(f.registrations||{}),...(rootRegSnap.val()||{})};
   const slots=f.slotsMeta||{};
   const regEntries=Object.entries(regs);
   const withMeet=regEntries.filter(([,r])=>r.meetLink).length;
@@ -991,7 +993,7 @@ window._openClassDetail = async (fid) => {
           ✉️ Enviar correos de citación
         </button>
         <button class="btn btn-secondary" onclick="window._exportClass('${fid}')">
-          ⬇️ Descargar resumen CSV
+          ⬇️ Descargar Excel
         </button>
         <button class="btn btn-secondary" onclick="window._modalAddSlot('${fid}')">
           + Añadir franja
@@ -1045,7 +1047,17 @@ window._openClassDetail = async (fid) => {
         ${Object.entries(slots).map(([sid,s])=>{
           const slotRegs=regEntries.filter(([,r])=>r.slotId===sid);
           const pct=s.max>0?Math.round(slotRegs.length/s.max*100):0;
-          return `<div style="margin-bottom:14px;">
+          const estudiantesList=slotRegs.length===0
+            ? `<p style="font-size:.78rem;color:var(--muted);margin:6px 0 0;">Sin inscritos aún.</p>`
+            : `<ul style="margin:6px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px;">
+                ${slotRegs.map(([,r])=>`<li style="font-size:.78rem;display:flex;align-items:center;gap:8px;">
+                  <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;"></span>
+                  <span style="font-weight:600;">${r.nombre||''} ${r.apellido||''}</span>
+                  <span style="color:var(--muted);">${r.correo||''}</span>
+                  ${r.telefono?`<span style="color:var(--muted);">${r.telefono}</span>`:''}
+                </li>`).join('')}
+              </ul>`;
+          return `<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border);">
             <div class="flex justify-between items-center">
               <span class="bold text-sm">📅 ${s.label}</span>
               <div class="flex gap-2">
@@ -1054,6 +1066,7 @@ window._openClassDetail = async (fid) => {
               </div>
             </div>
             <div class="prog-bar mt-1"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+            ${estudiantesList}
           </div>`;
         }).join('')||'<p class="text-muted text-sm">Sin franjas.</p>'}
       </div>
@@ -1276,21 +1289,41 @@ window._deleteReg = async (fid,rid) => {
 
 // ── EXPORT CSV ────────────────────────────────────────────────────
 window._exportClass = async (fid) => {
-  const fSnap=await get(ref(db,`forms/${fid}`));
+  const [fSnap,rootRegSnap]=await Promise.all([
+    get(ref(db,`forms/${fid}`)),
+    get(ref(db,`registrations/${fid}`))
+  ]);
   const f=fSnap.val(); if (!f) return;
-  const regs=Object.entries(f.registrations||{});
+  const allRegs={...(f.registrations||{}),...(rootRegSnap.val()||{})};
+  const regs=Object.entries(allRegs);
   const slots=f.slotsMeta||{};
+
+  if (!window.XLSX){ toast('Cargando Excel...','info'); return; }
+
+  // Sheet 1: all registrations
   const rows=[['Nombre','Apellido','Correo','Teléfono','Franja','Fecha','Hora inicio','Hora fin','Meet','Inscrito']];
   regs.forEach(([,r])=>{
     const s=slots[r.slotId]||{};
     rows.push([r.nombre||'',r.apellido||'',r.correo||'',r.telefono||'',s.label||'',s.date||'',s.start||'',s.end||'',r.meetLink||'',new Date(r.ts||0).toLocaleString('es-CO')]);
   });
-  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=Object.assign(document.createElement('a'),{
-    href:URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})),
-    download:`${f.title.replace(/\s+/g,'-')}.csv`
+
+  // Sheet 2: by slot
+  const bySlotRows=[['Franja','Nombre','Apellido','Correo','Teléfono','Meet']];
+  Object.entries(slots).forEach(([sid,s])=>{
+    const slotRegs=regs.filter(([,r])=>r.slotId===sid);
+    if (slotRegs.length===0){
+      bySlotRows.push([s.label,'(sin inscritos)','','','','']);
+    } else {
+      slotRegs.forEach(([,r])=>{
+        bySlotRows.push([s.label,r.nombre||'',r.apellido||'',r.correo||'',r.telefono||'',r.meetLink||'']);
+      });
+    }
   });
-  a.click();
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'Todos los inscritos');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(bySlotRows),'Por horario');
+  XLSX.writeFile(wb,`${(f.title||'clase').replace(/\s+/g,'-')}.xlsx`);
 };
 
 window._toggleAllCheck = (master) => {
@@ -1903,9 +1936,16 @@ async function renderStudentForm(fid){
       btn.disabled=false; btn.textContent='Confirmar inscripción'; return;
     }
 
-    // Save registration
-    const regRef=push(ref(db,`forms/${fid}/registrations`));
-    await set(regRef,{nombre,apellido,correo,telefono,slotId:selectedSlot,ts:Date.now(),meetLink:null});
+    // Save registration — write to top-level registrations/ (public write rule)
+    try {
+      const regRef=push(ref(db,`registrations/${fid}`));
+      await set(regRef,{nombre,apellido,correo,telefono,slotId:selectedSlot,ts:Date.now(),meetLink:null});
+    } catch(e) {
+      btn.disabled=false; btn.textContent='Confirmar inscripción';
+      err.textContent='No se pudo guardar tu inscripción. Intenta de nuevo.';
+      err.classList.remove('hidden');
+      return;
+    }
 
     document.getElementById('sf-form').classList.add('hidden');
     document.getElementById('sf-confirm').classList.remove('hidden');
@@ -1961,5 +2001,6 @@ function renderStudentSlots(slotsMeta,countBySlot,selectedSlot,onSelect){
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </body>
 </html>
