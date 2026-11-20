@@ -903,8 +903,12 @@ async function renderTeacherSection(id){
 
 // ── TEACHER: LIST OF CLASSES ──────────────────────────────────────
 async function renderTeacherForms(mc){
-  const fSnap=await get(ref(db,'forms'));
+  const [fSnap,rootRegSnap]=await Promise.all([
+    get(ref(db,'forms')),
+    get(ref(db,'registrations'))
+  ]);
   const all=fSnap.val()||{};
+  const rootRegs=rootRegSnap.val()||{};
   const mine=Object.entries(all).filter(([,f])=>f.teacherUid===currentUser.uid);
 
   mc.innerHTML=`
@@ -919,9 +923,10 @@ async function renderTeacherForms(mc){
   }
 
   mine.forEach(([fid,f])=>{
-    const regCount=f.registrations?Object.keys(f.registrations).length:0;
+    const allRegs={...(f.registrations||{}),...(rootRegs[fid]||{})};
+    const regCount=Object.keys(allRegs).length;
     const slotCount=f.slotsMeta?Object.keys(f.slotsMeta).length:0;
-    const withMeet=f.registrations?Object.values(f.registrations).filter(r=>r.meetLink).length:0;
+    const withMeet=Object.values(allRegs).filter(r=>r.meetLink).length;
     const formUrl=`${location.origin}${location.pathname}#form/${fid}`;
 
     mc.innerHTML+=`
