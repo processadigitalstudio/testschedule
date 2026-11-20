@@ -289,16 +289,19 @@ async function createCalendarEventWithMeet(token, {title, start, end, teacherEma
 // ── ROUTER ──────────────────────────────────────────────────────────
 let currentUser = null;
 let currentUserData = null;
+let _isStudentForm = false; // flag to block renderAuthed when in public form mode
 
 onAuthStateChanged(auth, async user => {
   const hash = location.hash;
+  // Public form link — show student form regardless of auth state
+  if (hash.startsWith('#form/')) {
+    _isStudentForm = true;
+    renderStudentForm(hash.replace('#form/', ''));
+    return;
+  }
+  _isStudentForm = false;
   if (user) {
     currentUser = user;
-    // If it's a public form link, show it directly even if logged in
-    if (hash.startsWith('#form/')) {
-      renderStudentForm(hash.replace('#form/', ''));
-      return;
-    }
     const snap = await get(ref(db, `users/${user.uid}`));
     currentUserData = snap.val();
     if (!currentUserData) { signOut(auth); return; }
@@ -308,11 +311,10 @@ onAuthStateChanged(auth, async user => {
       const org = orgSnap.val() || {};
       if (org.googleClientId) window._googleClientId = org.googleClientId;
     }
-    renderAuthed();
+    if (!_isStudentForm) renderAuthed();
   } else {
     currentUser = null; currentUserData = null;
-    if (hash.startsWith('#form/')) renderStudentForm(hash.replace('#form/', ''));
-    else renderLogin();
+    renderLogin();
   }
 });
 
