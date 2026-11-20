@@ -998,6 +998,9 @@ window._openClassDetail = async (fid) => {
         <button class="btn btn-secondary" onclick="window._modalAddSlot('${fid}')">
           + Añadir franja
         </button>
+        <button class="btn btn-danger" onclick="window._resetRegistrations('${fid}')">
+          🔄 Reiniciar inscripciones
+        </button>
       </div>
       <div id="meet-status" class="mt-3"></div>
     </div>
@@ -1800,6 +1803,17 @@ window._saveSlot=async(fid)=>{
   document.getElementById('slotModal').remove();
   toast(`${Object.keys(newSlots).length} franja${Object.keys(newSlots).length>1?'s':''}  añadida${Object.keys(newSlots).length>1?'s':''}`);
   window._openClassDetail(fid);
+};
+
+window._resetRegistrations=async(fid)=>{
+  if (!confirm('¿Segura? Esto borra TODAS las inscripciones de esta clase. Los estudiantes podrán volver a registrarse desde cero.')) return;
+  // Delete from both paths in parallel
+  await Promise.all([
+    remove(ref(db,`forms/${fid}/registrations`)),
+    remove(ref(db,`registrations/${fid}`))
+  ]);
+  toast('Inscripciones eliminadas. El link está listo para usarse de nuevo.','success');
+  window._openClassDetail(fid); // reload view
 };
 
 window._deleteSlot=async(fid,sid)=>{
