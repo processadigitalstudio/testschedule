@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TestSchedule</title>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<style>
+/* Quill editor overrides */
+.ql-container{font-family:'Segoe UI',system-ui,sans-serif;font-size:.9rem;border-radius:0 0 6px 6px;border-color:#cbd5e1 !important;}
+.ql-toolbar{border-radius:6px 6px 0 0;border-color:#cbd5e1 !important;background:#f8fafc;}
+.ql-editor{min-height:160px;max-height:320px;overflow-y:auto;}
+.ql-editor p{margin-bottom:4px;}
+.quill-label{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:12px;}
+</style>
 <style>
 :root {
   --brand: #2D3E50;
@@ -460,7 +469,8 @@ function showOrgModal(orgId,data){
         <div id="om-logo-preview" class="mt-2"></div>
         <label>Plantilla de correo de citación</label>
         <div class="alert alert-info mt-1" style="margin-bottom:0;">Usa: <code>{nombre}</code> <code>{apellido}</code> <code>{fecha}</code> <code>{hora}</code> <code>{meet}</code> <code>{profe}</code> <code>{nivel}</code> <code>{grupo}</code></div>
-        <textarea id="om-email-tpl" rows="6" placeholder="Estimado/a {nombre} {apellido},\n\nTe informamos que tu examen está programado para el {fecha} a las {hora}.\n\nLink de Meet: {meet}\n\nProfesor: {profe}\n\nSaludos,\nTweetalig">${data?.emailTemplate||''}</textarea>
+        <div class="quill-label">Cuerpo del correo</div>
+        <div id="om-email-tpl-editor"></div>
         <label>Asunto del correo</label>
         <input type="text" id="om-email-subj" placeholder="Citación a Examen de Inglés — {nombre} {apellido}" value="${data?.emailSubject||'Citación a Examen de Inglés — {nombre} {apellido}'}">
         <label>Google OAuth Client ID <span class="text-muted">(para crear Meet automático)</span></label>
@@ -476,12 +486,30 @@ function showOrgModal(orgId,data){
     p.innerHTML=e.target.value?`<img src="${e.target.value}" class="logo-preview" onerror="this.style.display='none'">`:'';
   });
   if(data?.logoUrl) document.getElementById('om-logo-preview').innerHTML=`<img src="${data.logoUrl}" class="logo-preview">`;
+  // Init Quill for org modal
+  window._orgModalQuill = new Quill('#om-email-tpl-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        ['bold','italic','underline'],
+        [{'list':'ordered'},{'list':'bullet'}],
+        ['link'],
+        [{'color':[]},{'background':[]}],
+        ['clean']
+      ]
+    }
+  });
+  let tplHtml = data?.emailTemplate||'';
+  if(tplHtml && !tplHtml.trim().startsWith('<')){
+    tplHtml = tplHtml.split('\n').map(l=>l?`<p>${l}</p>`:'<p><br></p>').join('');
+  }
+  window._orgModalQuill.root.innerHTML = tplHtml;
 }
 
 window._saveOrg = async (orgId) => {
   const name       = document.getElementById('om-name').value.trim();
   const logoUrl    = document.getElementById('om-logo').value.trim();
-  const emailTemplate = document.getElementById('om-email-tpl').value.trim();
+  const emailTemplate = window._orgModalQuill ? window._orgModalQuill.root.innerHTML : '';
   const emailSubject  = document.getElementById('om-email-subj').value.trim();
   const googleClientId= document.getElementById('om-gcal').value.trim();
   if (!name) return alert('Escribe el nombre.');
@@ -730,26 +758,46 @@ window._deleteTeacher = async (uid) => {
 async function renderAdminSettings(mc){
   const orgSnap=await get(ref(db,`orgs/${currentUserData.orgId}`));
   const org=orgSnap.val()||{};
+  // Convert plain-text template to HTML if it doesn't look like HTML already
+  let bodyHtml = org.emailTemplate||'';
+  if(bodyHtml && !bodyHtml.trim().startsWith('<')){
+    bodyHtml = bodyHtml.split('\n').map(l=>l?`<p>${l}</p>`:'<p><br></p>').join('');
+  }
+  if(!bodyHtml) bodyHtml = '<p>Estimado/a <strong>{nombre} {apellido}</strong>,</p><p><br></p><p>Te informamos que tu examen de inglés ha sido programado.</p><p><br></p><ul><li><strong>Fecha:</strong> {fecha}</li><li><strong>Hora:</strong> {hora}</li><li><strong>Link Google Meet:</strong> {meet}</li><li><strong>Profesor/a:</strong> {profe}</li><li><strong>Nivel · Grupo:</strong> {nivel} · {grupo}</li></ul><p><br></p><p>Por favor conéctate con 5 minutos de anticipación.</p><p><br></p><p>Saludos,<br><strong>Tweetalig Centro de Idiomas</strong></p>';
   mc.innerHTML=`
     <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px;">Configuración de la organización</h2>
     <div class="card">
       <div class="card-title">Plantilla de correo de citación</div>
       <div class="alert alert-info">Variables disponibles: <code>{nombre}</code> <code>{apellido}</code> <code>{fecha}</code> <code>{hora}</code> <code>{meet}</code> <code>{profe}</code> <code>{nivel}</code> <code>{grupo}</code> <code>{programa}</code></div>
       <label>Asunto</label>
-      <input type="text" id="as-subj" value="${org.emailSubject||'Citación a Examen de Inglés — {nombre} {apellido}'}">
-      <label>Cuerpo del correo</label>
-      <textarea id="as-body" rows="8">${org.emailTemplate||'Estimado/a {nombre} {apellido},\n\nTe informamos que tu examen de inglés ha sido programado.\n\nFecha: {fecha}\nHora: {hora}\nLink de Google Meet: {meet}\nProfesor/a: {profe}\nNivel: {nivel} · Grupo: {grupo}\n\nPor favor conectate con 5 minutos de anticipación.\n\nSaludos,\nTweetalig Centro de Idiomas'}</textarea>
+      <input type="text" id="as-subj" value="${(org.emailSubject||'Citación a Examen de Inglés — {nombre} {apellido}').replace(/"/g,'&quot;')}">
+      <div class="quill-label">Cuerpo del correo</div>
+      <div id="as-body-editor"></div>
       <div class="mt-3">
-        <button class="btn btn-primary" onclick="window._saveOrgSettings()">Guardar plantilla</button>
+        <button class="btn btn-primary" onclick="window._saveOrgSettings()">💾 Guardar plantilla</button>
       </div>
     </div>`;
+  // Init Quill
+  window._settingsQuill = new Quill('#as-body-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        ['bold','italic','underline'],
+        [{'list':'ordered'},{'list':'bullet'}],
+        ['link'],
+        [{'color':[]},{'background':[]}],
+        ['clean']
+      ]
+    }
+  });
+  window._settingsQuill.root.innerHTML = bodyHtml;
 }
 
 window._saveOrgSettings = async () => {
-  const subj=document.getElementById('as-subj').value.trim();
-  const body=document.getElementById('as-body').value.trim();
+  const subj = document.getElementById('as-subj').value.trim();
+  const body = window._settingsQuill ? window._settingsQuill.root.innerHTML : '';
   await update(ref(db,`orgs/${currentUserData.orgId}`),{emailSubject:subj,emailTemplate:body});
-  toast('Configuración guardada');
+  toast('✅ Configuración guardada');
 };
 
 async function renderAdminAccount(mc){
@@ -1094,8 +1142,8 @@ window._openSendEmailModal = async (fid) => {
       </div>
 
       <label>Vista previa del correo (primer estudiante)</label>
-      <div style="background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:12px;font-size:.82rem;white-space:pre-wrap;max-height:160px;overflow-y:auto;" id="em-preview">
-        ${buildEmailBody(tpl,withMeet[0]?.[1]||{},slots,f)}
+      <div style="background:#f8fafc;border:1px solid var(--border);border-radius:7px;padding:12px;font-size:.82rem;max-height:200px;overflow-y:auto;line-height:1.5;" id="em-preview">
+        ${buildEmailBodyHtml(tpl,withMeet[0]?.[1]||{},slots,f)}
       </div>
 
       <div class="modal-footer">
@@ -1105,10 +1153,30 @@ window._openSendEmailModal = async (fid) => {
     </div></div>`);
 };
 
+function htmlToPlainText(html){
+  // Convert HTML from Quill to plain text suitable for mailto body
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  // Replace <br> and block ends with newlines
+  tmp.querySelectorAll('br').forEach(br=>br.replaceWith('\n'));
+  tmp.querySelectorAll('p,li,h1,h2,h3,h4,div').forEach(el=>{
+    const tag = el.tagName.toLowerCase();
+    if(tag==='li'){
+      el.prepend('• ');
+      el.append('\n');
+    } else {
+      el.append('\n');
+    }
+  });
+  return tmp.textContent.replace(/\n{3,}/g,'\n\n').trim();
+}
+
 function buildEmailBody(tpl,reg,slots,form){
   if (!reg||!tpl) return tpl||'';
+  // If template is HTML (from Quill), convert to plain text for mailto
+  let body = tpl.trim().startsWith('<') ? htmlToPlainText(tpl) : tpl;
   const slot=slots[reg.slotId]||{};
-  return tpl
+  return body
     .replace(/{nombre}/g,reg.nombre||'')
     .replace(/{apellido}/g,reg.apellido||'')
     .replace(/{correo}/g,reg.correo||'')
@@ -1116,6 +1184,25 @@ function buildEmailBody(tpl,reg,slots,form){
     .replace(/{fecha}/g,slot.date||slot.lbl||'—')
     .replace(/{hora}/g,slot.start?(slot.start+(slot.end?' – '+slot.end:'')):'—')
     .replace(/{meet}/g,reg.meetLink||'(pendiente)')
+    .replace(/{profe}/g,form.teacherName||'')
+    .replace(/{nivel}/g,form.nivel||'')
+    .replace(/{grupo}/g,form.grupo||'')
+    .replace(/{programa}/g,reg.programa||form.programa||'');
+}
+
+function buildEmailBodyHtml(tpl,reg,slots,form){
+  // Returns HTML version for preview (keeps formatting)
+  if (!reg||!tpl) return tpl||'';
+  const slot=slots[reg.slotId]||{};
+  let body = tpl.trim().startsWith('<') ? tpl : tpl.split('\n').map(l=>l?`<p>${l}</p>`:'<p><br></p>').join('');
+  return body
+    .replace(/{nombre}/g,reg.nombre||'')
+    .replace(/{apellido}/g,reg.apellido||'')
+    .replace(/{correo}/g,reg.correo||'')
+    .replace(/{telefono}/g,reg.telefono||'')
+    .replace(/{fecha}/g,slot.date||slot.lbl||'—')
+    .replace(/{hora}/g,slot.start?(slot.start+(slot.end?' – '+slot.end:'')):'—')
+    .replace(/{meet}/g,`<a href="${reg.meetLink||'#'}">${reg.meetLink||'(pendiente)'}</a>`)
     .replace(/{profe}/g,form.teacherName||'')
     .replace(/{nivel}/g,form.nivel||'')
     .replace(/{grupo}/g,form.grupo||'')
@@ -1771,5 +1858,6 @@ function renderStudentSlots(slotsMeta,countBySlot,selectedSlot,onSelect){
 }
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 </body>
 </html>
