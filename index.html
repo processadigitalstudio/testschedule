@@ -294,6 +294,11 @@ const hash = location.hash;
 onAuthStateChanged(auth, async user => {
   if (user) {
     currentUser = user;
+    // If it's a public form link, show it directly even if logged in
+    if (hash.startsWith('#form/')) {
+      renderStudentForm(hash.replace('#form/', ''));
+      return;
+    }
     const snap = await get(ref(db, `users/${user.uid}`));
     currentUserData = snap.val();
     if (!currentUserData) { signOut(auth); return; }
@@ -1827,10 +1832,13 @@ async function renderStudentForm(fid){
         <div id="sf-confirm" class="hidden">
           <div class="confirm-wrap">
             <div class="confirm-icon">✅</div>
-            <h2>¡Inscripción exitosa!</h2>
-            <p class="text-muted mt-2">Tu horario de examen oral:</p>
+            <h2>¡Inscripción confirmada!</h2>
+            <p class="text-muted mt-2" style="font-size:.95rem;">Hemos registrado tu cita de examen oral.</p>
             <div class="confirm-box" id="sf-confirm-detail"></div>
-            <p class="mt-3 text-muted">Recibirás la citación oficial con el link de Google Meet en tu correo en los próximos días.</p>
+            <div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;border-radius:10px;text-align:left;">
+              <p style="margin:0 0 4px 0;font-weight:700;color:#1d4ed8;font-size:.88rem;">📬 ¿Y ahora qué?</p>
+              <p style="margin:0;font-size:.85rem;color:#1e40af;line-height:1.5;">En los próximos días recibirás en tu correo la <strong>citación oficial</strong> con el enlace de <strong>Google Meet</strong> para conectarte el día del examen.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1883,10 +1891,33 @@ async function renderStudentForm(fid){
     document.getElementById('sf-form').classList.add('hidden');
     document.getElementById('sf-confirm').classList.remove('hidden');
     document.getElementById('sf-confirm-detail').innerHTML=`
-      <p><strong>Nombre:</strong> ${nombre} ${apellido}</p>
-      <p><strong>Correo:</strong> ${correo}</p>
-      <p><strong>Teléfono:</strong> ${telefono}</p>
-      <p><strong>Horario:</strong> ${slotMeta.label}</p>`;
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="color:var(--muted);font-size:.82rem;min-width:80px;">Nombre</span>
+          <span style="font-weight:700;">${nombre} ${apellido}</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="color:var(--muted);font-size:.82rem;min-width:80px;">Correo</span>
+          <span>${correo}</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="color:var(--muted);font-size:.82rem;min-width:80px;">WhatsApp</span>
+          <span>${telefono}</span>
+        </div>
+        <div style="border-top:1px solid var(--border);margin:4px 0;"></div>
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="color:var(--muted);font-size:.82rem;min-width:80px;">📅 Fecha y hora</span>
+          <span style="font-weight:700;color:var(--accent);font-size:1rem;">${slotMeta.label}</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="color:var(--muted);font-size:.82rem;min-width:80px;">👩‍🏫 Profesor/a</span>
+          <span>${f.teacherName||'—'}</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline;">
+          <span style="color:var(--muted);font-size:.82rem;min-width:80px;">📚 Nivel</span>
+          <span>${f.nivel||''} ${f.grupo||''}</span>
+        </div>
+      </div>`;
   };
 }
 
