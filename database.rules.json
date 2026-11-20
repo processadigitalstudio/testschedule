@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "orgs": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "users": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "forms": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "registrations": {
+      ".read": "auth != null",
+      "$formId": {
+        ".write": true
+      }
+    }
+  }
+}
