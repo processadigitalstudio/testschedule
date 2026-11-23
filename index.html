@@ -991,8 +991,8 @@ window._openClassDetail = async (fid) => {
     <div class="card">
       <div class="card-title">Acciones</div>
       <div class="flex gap-2 wrap">
-        <button class="btn btn-primary" onclick="window._generateMeets('${fid}')" id="btn-gen-meet">
-          🎥 Generar links de Meet
+        <button class="btn btn-primary" onclick="window._generateSheets('${fid}')" id="btn-gen-sheet">
+          📊 Generar Sheets
         </button>
         <button class="btn btn-green" onclick="window._openSendEmailModal('${fid}')">
           ✉️ Enviar correos de citación
@@ -1081,66 +1081,174 @@ window._openClassDetail = async (fid) => {
     </div>`;
 };
 
-// ── GENERATE MEETS ────────────────────────────────────────────────
-window._generateMeets = async (fid) => {
-  const statusEl=document.getElementById('meet-status');
-  const clientId=getGoogleClientId();
-  if (!clientId){
-    statusEl.innerHTML=`<div class="alert alert-warn">⚠️ Esta organización no tiene configurado el Google Client ID. Pídele al administrador que lo configure en Ajustes de la organización.</div>`;
+// ── HELPERS: fecha/hora legible ────────────────────────────────────
+function _isoToFechaTexto(isoDate) {
+  // "2025-01-15" → "Miércoles, 15 de enero"
+  if (!isoDate) return '—';
+  const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const [y,m,d] = isoDate.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  return `${DIAS[dt.getDay()]}, ${d} de ${MESES[m-1]}`;
+}
+
+function _24hTo12h(time24) {
+  // "08:20" → "8:20 AM"  |  "20:30" → "8:30 PM"
+  if (!time24) return '—';
+  const [hStr, min] = time24.split(':');
+  let h = parseInt(hStr, 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  if (h > 12) h -= 12;
+  if (h === 0) h = 12;
+  return `${h}:${min} ${ampm}`;
+}
+
+// ── GENERATE SHEETS ────────────────────────────────────────────────
+window._generateSheets = async (fid) => {
+  const statusEl = document.getElementById('meet-status');
+  const clientId = getGoogleClientId();
+  if (!clientId) {
+    statusEl.innerHTML = `<div class="alert alert-warn">⚠️ Esta organización no tiene configurado el Google Client ID.</div>`;
     return;
   }
 
-  statusEl.innerHTML=`<div class="alert alert-info">🔐 Autorizando con Google Calendar... Se abrirá una ventana de Google.</div>`;
+  statusEl.innerHTML = `<div class="alert alert-info">🔐 Autorizando con Google Drive... Se abrirá una ventana de Google.</div>`;
 
   try {
-    const token=await authorizeGoogleCalendar(clientId);
-    gCalToken=token;
-    statusEl.innerHTML=`<div class="alert alert-success">Autorizado. Generando links de Meet...</div>`;
+    // OAuth con scope drive.file (no sensible, no requiere verificación)
+    const token = await new Promise((resolve, reject) => {
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: location.origin + location.pathname,
+        response_type: 'token',
+        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
+        prompt: 'consent'
+      });
+      const popup = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params, 'gdrive_auth', 'width=500,height=600');
+      const timer = setInterval(() => {
+        try {
+          if (popup.closed) { clearInterval(timer); reject(new Error('Popup cerrado')); return; }
+          const hash = popup.location.hash;
+          if (hash && hash.includes('access_token')) {
+            clearInterval(timer);
+            popup.close();
+            const p = new URLSearchParams(hash.substring(1));
+            resolve(p.get('access_token'));
+          }
+        } catch(e) { /* cross-origin, still loading */ }
+      }, 300);
+    });
 
-    const fSnap=await get(ref(db,`forms/${fid}`));
-    const f=fSnap.val(); if (!f) return;
-    const regs=f.registrations||{};
-    const slots=f.slotsMeta||{};
+    statusEl.innerHTML = `<div class="alert alert-info">⏳ Obteniendo datos y creando hoja...</div>`;
 
-    let created=0, skipped=0, errors=0;
-    for (const [rid,r] of Object.entries(regs)){
-      if (r.meetLink){ skipped++; continue; }
-      const slot=slots[r.slotId];
-      if (!slot){ errors++; continue; }
+    // Cargar datos del formulario
+    const [fSnap, rootRegSnap] = await Promise.all([
+      get(ref(db, `forms/${fid}`)),
+      get(ref(db, `registrations/${fid}`))
+    ]);
+    const f = fSnap.val(); if (!f) return;
+    const allRegs = {...(f.registrations||{}), ...(rootRegSnap.val()||{})};
+    const slots = f.slotsMeta || {};
+    const regEntries = Object.entries(allRegs);
 
-      // Build ISO datetimes from slot
-      const datePart=slot.date||new Date().toISOString().split('T')[0];
-      const startISO=`${datePart}T${slot.start}:00`;
-      const endISO=`${datePart}T${(slot.end||slot.start)}:00`;
-
-      try {
-        const result=await createCalendarEventWithMeet(token,{
-          title: f.title,
-          start: startISO,
-          end: endISO,
-          teacherEmail: f.teacherEmail,
-          studentName: `${r.nombre} ${r.apellido}`,
-          studentEmail: r.correo,
-          description: `Examen de inglés — ${f.nivel||''} ${f.grupo||''}\nEstudiante: ${r.nombre} ${r.apellido}`
-        });
-        await update(ref(db,`forms/${fid}/registrations/${rid}`),{
-          meetLink: result.meetLink,
-          calEventId: result.eventId,
-          calEventLink: result.eventLink
-        });
-        created++;
-        statusEl.innerHTML=`<div class="alert alert-info">⏳ Generando... ${created} creados, ${skipped} ya tenían Meet.</div>`;
-      } catch(e){ errors++; console.error('Meet error for',rid,e); }
-
-      // Small delay to avoid rate limits
-      await new Promise(res=>setTimeout(res,300));
+    if (regEntries.length === 0) {
+      statusEl.innerHTML = `<div class="alert alert-warn">⚠️ No hay estudiantes inscritos.</div>`;
+      return;
     }
 
-    statusEl.innerHTML=`<div class="alert alert-success">Listo. ${created} links creados, ${skipped} ya existían${errors>0?`, ${errors} errores`:''}.
-      <br><button class="btn btn-secondary btn-sm mt-2" onclick="window._openClassDetail('${fid}')">Actualizar vista</button></div>`;
+    // Construir filas para el Sheet
+    const headers = ['#','Nombre','Apellido','Teléfono','Correo','Fecha','Hora','Meet'];
+    const rows = regEntries.map(([,r], i) => {
+      const s = slots[r.slotId] || {};
+      return [
+        i + 1,
+        r.nombre || '',
+        r.apellido || '',
+        r.telefono || '',
+        r.correo || '',
+        _isoToFechaTexto(s.date),
+        _24hTo12h(s.start),
+        r.meetLink || ''
+      ];
+    });
 
-  } catch(e){
-    statusEl.innerHTML=`<div class="alert alert-danger">❌ Error: ${e.message}</div>`;
+    const sheetTitle = `${f.title || 'Examen'} — ${new Date().toLocaleDateString('es-CO')}`;
+
+    // Crear el Spreadsheet via Sheets API
+    const createResp = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        properties: { title: sheetTitle },
+        sheets: [{
+          properties: { title: 'Estudiantes', sheetId: 0 },
+          data: [{
+            startRow: 0, startColumn: 0,
+            rowData: [
+              // Fila de encabezados
+              { values: headers.map(h => ({
+                userEnteredValue: { stringValue: h },
+                userEnteredFormat: {
+                  backgroundColor: { red: 0.231, green: 0.290, blue: 0.165 },
+                  textFormat: { bold: true, foregroundColor: { red:0.957, green:0.945, blue:0.918 }, fontSize: 10 },
+                  horizontalAlignment: 'CENTER'
+                }
+              })) },
+              // Filas de datos
+              ...rows.map((row, ri) => ({
+                values: row.map((cell, ci) => {
+                  const v = typeof cell === 'number'
+                    ? { numberValue: cell }
+                    : { stringValue: String(cell) };
+                  return {
+                    userEnteredValue: v,
+                    userEnteredFormat: {
+                      backgroundColor: ri % 2 === 0
+                        ? { red:1, green:1, blue:1 }
+                        : { red:0.961, green:0.961, blue:0.933 },
+                      textFormat: { fontSize: 10 },
+                      horizontalAlignment: ci === 0 ? 'CENTER' : 'LEFT',
+                      wrapStrategy: 'CLIP'
+                    }
+                  };
+                })
+              }))
+            ]
+          }]
+        }]
+      })
+    });
+
+    if (!createResp.ok) {
+      const err = await createResp.json();
+      throw new Error(err.error?.message || 'Error creando el Sheets');
+    }
+    const sheetData = await createResp.json();
+    const sheetId = sheetData.spreadsheetId;
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
+
+    // Formato adicional: congelar fila de encabezado + auto-resize
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests: [
+        { updateSheetProperties: {
+            properties: { sheetId: 0, gridProperties: { frozenRowCount: 1 } },
+            fields: 'gridProperties.frozenRowCount'
+        }},
+        { autoResizeDimensions: {
+            dimensions: { sheetId: 0, dimension: 'COLUMNS', startIndex: 0, endIndex: 8 }
+        }}
+      ]})
+    });
+
+    statusEl.innerHTML = `<div class="alert alert-success">
+      ✅ Sheets creado con ${regEntries.length} estudiantes.
+      <br><a href="${sheetUrl}" target="_blank" class="btn btn-primary btn-sm mt-2">📊 Abrir Google Sheet</a>
+    </div>`;
+
+  } catch(e) {
+    statusEl.innerHTML = `<div class="alert alert-danger">❌ Error: ${e.message}</div>`;
   }
 };
 
