@@ -1121,7 +1121,7 @@ window._generateSheets = async (fid) => {
         client_id: clientId,
         redirect_uri: location.origin + location.pathname,
         response_type: 'token',
-        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
+        scope: 'https://www.googleapis.com/auth/drive.file',
         prompt: 'consent'
       });
       const popup = window.open('https://accounts.google.com/o/oauth2/v2/auth?' + params, 'gdrive_auth', 'width=500,height=600');
