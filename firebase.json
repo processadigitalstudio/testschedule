@@ -11,8 +11,18 @@
     ],
     "rewrites": [
       {
+        "source": "/privacy",
+        "destination": "/privacy.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/privacy.html",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       }
     ]
   }
