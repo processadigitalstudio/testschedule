@@ -1157,7 +1157,7 @@ window._generateSheets = async (fid) => {
     }
 
     // Construir filas para el Sheet
-    const headers = ['#','Nombre','Apellido','Teléfono','Correo','Fecha','Hora','Meet'];
+    const headers = ['#','Nombre','Apellido','Teléfono','Correo','Nivel','Fecha','Hora','Meet'];
     const rows = regEntries.map(([,r], i) => {
       const s = slots[r.slotId] || {};
       return [
@@ -1166,6 +1166,7 @@ window._generateSheets = async (fid) => {
         r.apellido || '',
         r.telefono || '',
         r.correo || '',
+        f.nivel || '',
         _isoToFechaTexto(s.date),
         _24hTo12h(s.start),
         r.meetLink || ''
@@ -1237,7 +1238,7 @@ window._generateSheets = async (fid) => {
             fields: 'gridProperties.frozenRowCount'
         }},
         { autoResizeDimensions: {
-            dimensions: { sheetId: 0, dimension: 'COLUMNS', startIndex: 0, endIndex: 8 }
+            dimensions: { sheetId: 0, dimension: 'COLUMNS', startIndex: 0, endIndex: 9 }
         }}
       ]})
     });
@@ -1417,10 +1418,10 @@ window._exportClass = async (fid) => {
   if (!window.XLSX){ toast('Cargando Excel...','info'); return; }
 
   // Sheet 1: all registrations
-  const rows=[['Nombre','Apellido','Correo','Teléfono','Franja','Fecha','Hora inicio','Hora fin','Meet','Inscrito']];
+  const rows=[['Nombre','Apellido','Correo','Teléfono','Nivel','Franja','Fecha','Hora inicio','Hora fin','Meet','Inscrito']];
   regs.forEach(([,r])=>{
     const s=slots[r.slotId]||{};
-    rows.push([r.nombre||'',r.apellido||'',r.correo||'',r.telefono||'',s.label||'',s.date||'',s.start||'',s.end||'',r.meetLink||'',new Date(r.ts||0).toLocaleString('es-CO')]);
+    rows.push([r.nombre||'',r.apellido||'',r.correo||'',r.telefono||'',f.nivel||'',s.label||'',s.date||'',s.start||'',s.end||'',r.meetLink||'',new Date(r.ts||0).toLocaleString('es-CO')]);
   });
 
   // Sheet 2: by slot
